@@ -1,0 +1,55 @@
+{
+  "name": "peintre2",
+  "version": "0.0.1",
+  "author": "OceanPresent <oceanpresent@163.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/OceanPresentChao/peintre2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OceanPresentChao/peintre2.git"
+  },
+  "keywords": [
+    "oceanpresent"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/peintre2.umd.js",
+      "import": "./dist/peintre2.es.js"
+    }
+  },
+  "main": "./dist/peintre2.umd.js",
+  "module": "./dist/peintre2.es.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview --port 5050",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@vueuse/core": "^8.9.4",
+    "vue": "^3.2.45",
+    "vue-i18n": "^9.2.2"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.25.2",
+    "@iconify/vue": "^3.2.1",
+    "@types/node": "^16.18.11",
+    "@vitejs/plugin-vue": "^2.3.4",
+    "@vue/tsconfig": "^0.1.3",
+    "autoprefixer": "^10.4.13",
+    "consola": "^2.15.3",
+    "eslint": "^8.31.0",
+    "typescript": "~4.5.5",
+    "unocss": "^0.46.5",
+    "unplugin-auto-import": "^0.6.9",
+    "unplugin-vue-components": "^0.18.5",
+    "vite": "^2.9.15",
+    "vite-plugin-style-import": "^2.0.0",
+    "vue-tsc": "^0.31.4"
+  }
+}
