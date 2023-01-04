@@ -10,6 +10,7 @@ specifiers:
   autoprefixer: ^10.4.13
   consola: ^2.15.3
   eslint: ^8.31.0
+  nanoid: ^4.0.0
   typescript: ~4.5.5
   unocss: ^0.46.5
   unplugin-auto-import: ^0.6.9
@@ -34,6 +35,7 @@ devDependencies:
   autoprefixer: 10.4.13
   consola: 2.15.3
   eslint: 8.31.0
+  nanoid: 4.0.0
   typescript: 4.5.5
   unocss: 0.46.5_vite@2.9.15
   unplugin-auto-import: 0.6.9_tz26lugnys4zsg624icbm2tdye
@@ -2842,6 +2844,12 @@ packages:
     resolution: {integrity: sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
+
+  /nanoid/4.0.0:
+    resolution: {integrity: sha512-IgBP8piMxe/gf73RTQx7hmnhwz0aaEXYakvqZyE302IXW3HyVNhdNGC+O2MwMAVhLEnvXlvKtGbtJf6wvHihCg==}
+    engines: {node: ^14 || ^16 || >=18}
+    hasBin: true
+    dev: true
 
   /natural-compare-lite/1.4.0:
     resolution: {integrity: sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g==}
