@@ -7,3 +7,14 @@ export interface Position {
 export type DrawType = 'line' | 'rect' | 'circle' | 'text' | 'image' | 'pencil'
 
 export type DrawElement = PencilElement
+
+export interface Snapshot {
+  id: string
+  elements: DrawElement[]
+}
+
+export interface ContextStyle {
+  lineWidth: number
+  strokeStyle: string
+  fillStyle: string
+}
