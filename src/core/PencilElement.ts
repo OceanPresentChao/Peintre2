@@ -1,10 +1,12 @@
 import { CanvasElement } from './CanvasElement'
-import type { Position } from '@/types'
+import type { ContextStyle, Position } from '@/types'
 
 export class PencilElement extends CanvasElement {
   positions: Position[] = []
-  constructor(layer: number) {
+  style: ContextStyle
+  constructor(layer: number, style: ContextStyle) {
     super('pencil', layer)
+    this.style = style
   }
 
   addPosition(position: Position) {
@@ -20,6 +22,7 @@ export function renderPencil(context: CanvasRenderingContext2D, instance: Pencil
   context.save()
   context.lineJoin = 'round'
   context.lineCap = 'round'
+  Object.assign(context, instance.style)
   for (let i = 1; i < instance.positions.length; i++)
     drawLine(context, instance, i)
   context.restore()
