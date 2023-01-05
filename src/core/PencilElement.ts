@@ -4,7 +4,7 @@ import type { ContextStyle, Position } from '@/types'
 export class PencilElement extends CanvasElement {
   positions: Position[] = []
   style: ContextStyle
-  constructor(layer: number, style: ContextStyle) {
+  constructor(layer: string, style: ContextStyle) {
     super('pencil', layer)
     this.style = style
   }
@@ -50,5 +50,6 @@ function drawLine(context: CanvasRenderingContext2D, instance: PencilElement, i:
     context.moveTo(lastX, lastY)
     context.quadraticCurveTo(centerX, centerY, x, y)
   }
+  context.closePath()
   context.stroke()
 }

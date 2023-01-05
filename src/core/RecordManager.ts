@@ -7,7 +7,7 @@ export class RecordManager {
     this.index = -1
   }
 
-  pushData(data: Snapshot) {
+  pushSnapshot(data: Snapshot) {
     this.snapStack.push(data)
   }
 
@@ -38,10 +38,10 @@ export class RecordManager {
       return null
   }
 
-  createSnapshot(elements: DrawElement[]): Snapshot {
+  createSnapshot(layers: Map<string, DrawElement[]>): Snapshot {
     return {
       id: nanoid(),
-      elements,
+      layers,
     }
   }
 }

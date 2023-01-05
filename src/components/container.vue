@@ -10,7 +10,9 @@ const { x, y } = useMouse({ type: 'client' })
     <p text-xl>
       Current Mouse x:{{ x }} y: {{ y }}
     </p>
-    <slot />
+    <div flex items-center justify-center>
+      <slot />
+    </div>
   </div>
 </template>
 
