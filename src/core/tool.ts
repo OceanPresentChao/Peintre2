@@ -1,12 +1,4 @@
-import type { Position } from '@/types'
-
-export function clientToCanvas(canvas: HTMLCanvasElement, position: Position): Position {
-  const { left, top } = canvas.getBoundingClientRect()
-  return {
-    x: position.x - left,
-    y: position.y - top,
-  }
-}
+import type { Ref } from 'vue'
 
 export function deepCopy<T>(instance: T, map = new WeakMap<any, any>()): T {
   if (instance == null)
@@ -33,4 +25,27 @@ export function deepCopy<T>(instance: T, map = new WeakMap<any, any>()): T {
     return copyInstance as T
   }
   return instance
+}
+
+export function useSpacepress(): Ref<boolean> {
+  const isSpacePress = ref(false)
+  const onKeydown = (e: KeyboardEvent) => {
+    if (e.code === 'Space')
+      isSpacePress.value = true
+  }
+  const onKeyup = (e: KeyboardEvent) => {
+    if (e.code === 'Space')
+      isSpacePress.value = false
+  }
+  if (window) {
+    window.addEventListener('keydown', onKeydown)
+    window.addEventListener('keyup', onKeyup)
+  }
+  onBeforeUnmount(() => {
+    if (window) {
+      window.removeEventListener('keydown', onKeydown)
+      window.removeEventListener('keyup', onKeyup)
+    }
+  })
+  return isSpacePress
 }
