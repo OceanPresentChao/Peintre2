@@ -10,6 +10,8 @@ interface PainterBoardOptions {
 export class PainterBoard {
   context: CanvasRenderingContext2D
   canvas: HTMLCanvasElement
+  private offsetCanvas: HTMLCanvasElement
+  private offsetContext: CanvasRenderingContext2D
   recordManager: RecordManager
   layerManager: LayerManager
   currentElement: DrawElement | null = null
@@ -29,6 +31,8 @@ export class PainterBoard {
   constructor(canvas: HTMLCanvasElement, _?: PainterBoardOptions) {
     this.canvas = canvas
     this.context = canvas.getContext('2d')!
+    this.offsetCanvas = document.createElement('canvas')
+    this.offsetContext = this.offsetCanvas.getContext('2d')!
     this.recordManager = new RecordManager()
     this.layerManager = new LayerManager()
     this.toolType = 'pencil'
@@ -45,22 +49,32 @@ export class PainterBoard {
       lastMove: { x: -1, y: -1 },
       lastEnd: { x: -1, y: -1 },
     }
+    this.resizeCanvas()
   }
 
-  cleanCanvas(w = Number.MAX_SAFE_INTEGER) {
-    this.context.clearRect(-(w / 2), -(w / 2), w, w)
+  cleanCanvas(context: CanvasRenderingContext2D = this.context) {
+    const w = Number.MAX_SAFE_INTEGER
+    context.clearRect(-(w / 2), -(w / 2), w, w)
   }
 
   render() {
     this.cleanCanvas()
-    for (const layer of this.layerManager.iter()) {
-      const els = this.state.get(layer.id)!
-      els.forEach((el) => {
-        el.render(this.context)
-      })
-    }
+    // index = 0为栈顶，故从栈底开始渲染
+    for (let i = this.layerManager.layers.length - 1; i >= 0; i--)
+      this.renderLayer(this.layerManager.layers[i].id)
   }
 
+  renderLayer(id: string) {
+    const layer = this.layerManager.findLayer(id)!
+    const els = this.state.get(layer.id)!
+    this.cleanCanvas(this.offsetContext)
+    els.forEach((el) => {
+      el.render(this.offsetContext)
+    })
+    this.context.drawImage(this.offsetCanvas, 0, 0)
+  }
+
+  // Position是相对于 画布原点为（0,0）时 的坐标。不受拖拽画布的影响
   addPosition(position: Position) {
     if (this.currentElement)
       this.currentElement.addPosition(position)
@@ -106,6 +120,7 @@ export class PainterBoard {
       const translateX = position.x - this.mouseRecord.lastMove.x
       const translateY = position.y - this.mouseRecord.lastMove.y
       this.context.translate(translateX, translateY)
+      this.offsetContext.translate(translateX, translateY)
       this.originPosition.x += translateX
       this.originPosition.y += translateY
     }
@@ -131,5 +146,14 @@ export class PainterBoard {
    */
   translateOriginPosition() {
     this.context.translate(this.originPosition.x, this.originPosition.y)
+  }
+
+  resizeCanvas(width?: number, height?: number) {
+    if (width)
+      this.canvas.width = width
+    if (height)
+      this.canvas.height = height
+    this.offsetCanvas.width = this.canvas.width
+    this.offsetCanvas.height = this.canvas.height
   }
 }

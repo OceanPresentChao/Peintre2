@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid'
 import type { Layer } from '@/types'
 export class LayerManager {
+  // 可以看做是一个栈，index = 0 为栈顶
   layers: Layer[] = []
   private map: Map<string, Layer>
   constructor() {

@@ -1,18 +1,27 @@
 <script setup lang="ts">
+import draggable from 'vuedraggable'
+
 import type { ContextStyle, DrawType, Layer } from '@/types'
+
 interface ToolBarProps {
-  modelValue: ContextStyle
+  setting: ContextStyle
   layers: Layer[]
-  curLayer: Layer | undefined
+  curLayer: Layer
   toolType: DrawType
 }
-const props = defineProps<ToolBarProps>()
-const emits = defineEmits(['update:value', 'addLayer', 'setLayer'])
-const setting = ref<ContextStyle>(unref(props.modelValue))
 
-watch(setting, (nv) => {
-  emits('update:value', nv)
+const props = defineProps<ToolBarProps>()
+const emits = defineEmits(['update:layers', 'update:setting', 'addLayer', 'setLayer', 'dragLayer'])
+const toolSetting = ref<ContextStyle>(unref(props.setting))
+const layerList = ref<Layer[]>(unref(props.layers))
+
+watch(toolSetting, (nv) => {
+  emits('update:setting', nv)
 }, { deep: true })
+
+watch(layerList, (nv) => {
+  emits('update:layers', nv)
+})
 </script>
 
 <template>
@@ -21,13 +30,13 @@ watch(setting, (nv) => {
       <div>1</div>
       <div>
         <label>Stroke Color:</label>
-        <input v-model="setting.strokeStyle" type="color">
+        <input v-model="toolSetting.strokeStyle" type="color">
         <label>Fill Color:</label>
-        <input v-model="setting.fillStyle" type="color">
+        <input v-model="toolSetting.fillStyle" type="color">
       </div>
       <div>
         <label>Line Width:</label>
-        <input v-model="setting.lineWidth" type="range">
+        <input v-model="toolSetting.lineWidth" type="range">
       </div>
       <div>
         <button text-lg @click="$emit('addLayer')">
@@ -35,13 +44,24 @@ watch(setting, (nv) => {
         </button>
       </div>
       <div>
-        <p
-          v-for="l in layers" :key="l.id"
-          :class="{ active: curLayer?.id === l.id }"
-          @click="$emit('setLayer', l.id)"
+        <draggable
+          v-model="layerList"
+          item-key="id"
+          :component-data="{ tag: 'div', name: 'flip-list', type: 'transition' }"
+          ghost-class="ghost"
+          @change="$emit('dragLayer')"
         >
-          {{ l }}
-        </p>
+          <template #item="{ element }">
+            <div
+              :class="{ active: curLayer.id === element.id }"
+              @click="$emit('setLayer', element.id)"
+            >
+              <p>
+                {{ element }}
+              </p>
+            </div>
+          </template>
+        </draggable>
       </div>
     </div>
   </div>
@@ -50,5 +70,14 @@ watch(setting, (nv) => {
 <style scoped>
 .active {
   background-color: #d41414;
+}
+
+.ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+
+.flip-list-move {
+  transition: transform 0.5s;
 }
 </style>

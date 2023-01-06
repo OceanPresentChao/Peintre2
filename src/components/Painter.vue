@@ -19,9 +19,6 @@ const canvasRef = ref<HTMLCanvasElement | null>(null)
 const painterBoard = ref<PainterBoard | null>(null)
 const isSpacePress = useSpacepress()
 const isMouseDown = ref(false)
-const layers = computed(() => {
-  return painterBoard.value?.layerManager.getLayerArray() || []
-})
 
 onMounted(() => {
   if (canvasRef.value) {
@@ -32,14 +29,6 @@ onMounted(() => {
     }, { immediate: true, deep: true })
   }
 })
-
-function setCurrentLayer(id: string) {
-  painterBoard.value?.setCurrentLayer(id)
-}
-
-function addLayer() {
-  painterBoard.value?.addLayer()
-}
 
 function handleMousedown(ev: MouseEvent) {
   ev.preventDefault()
@@ -109,6 +98,19 @@ function handleMouseup(ev: MouseEvent) {
     painterBoard.value.mouseRecord.lastEnd = { x: clientX, y: clientY }
   }
 }
+
+function handleSetLayer(id: string) {
+  painterBoard.value?.setCurrentLayer(id)
+}
+
+function handleAddLayer() {
+  painterBoard.value?.addLayer()
+}
+
+function handleDragLayer() {
+  if (painterBoard.value)
+    painterBoard.value.render()
+}
 </script>
 
 <template>
@@ -116,14 +118,19 @@ function handleMouseup(ev: MouseEvent) {
     <p>
       isSpacePress:{{ isSpacePress }}
     </p>
+    <p>
+      layers:{{ painterBoard?.layerManager.layers }}
+    </p>
     <div flex>
       <ToolBar
-        v-model="painterSetting"
-        :layers="layers"
-        :cur-layer="painterBoard?.currentLayer"
-        :tool-type="painterBoard?.toolType || 'pencil'"
-        @add-layer="addLayer"
-        @set-layer="setCurrentLayer"
+        v-if="painterBoard"
+        v-model:setting="painterSetting"
+        v-model:layers="painterBoard!.layerManager.layers"
+        :cur-layer="painterBoard!.currentLayer"
+        :tool-type="painterBoard!.toolType || 'pencil'"
+        @add-layer="handleAddLayer"
+        @set-layer="handleSetLayer"
+        @drag-layer="handleDragLayer"
       />
       <canvas
         ref="canvasRef" bg-blue

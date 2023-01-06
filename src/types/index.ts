@@ -19,12 +19,6 @@ export interface Layer {
   show: boolean
 }
 
-export interface LinkNode<T> {
-  el: T
-  next: LinkNode<T> | null
-  prev: LinkNode<T> | null
-}
-
 export interface ContextStyle {
   lineWidth: number
   strokeStyle: string
