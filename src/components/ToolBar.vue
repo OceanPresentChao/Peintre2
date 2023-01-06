@@ -11,7 +11,7 @@ interface ToolBarProps {
 }
 
 const props = defineProps<ToolBarProps>()
-const emits = defineEmits(['update:layers', 'update:setting', 'addLayer', 'setLayer', 'dragLayer'])
+const emits = defineEmits(['update:layers', 'update:setting', 'addLayer', 'setLayer', 'dragLayer', 'setTool'])
 const toolSetting = ref<ContextStyle>(unref(props.setting))
 const layerList = ref<Layer[]>(unref(props.layers))
 
@@ -27,7 +27,16 @@ watch(layerList, (nv) => {
 <template>
   <div>
     <div flex flex-col>
-      <div>1</div>
+      <div>
+        <button @click="$emit('setTool', 'pencil')">
+          Pencil
+        </button>
+      </div>
+      <div>
+        <button @click="$emit('setTool', 'eraser')">
+          Eraser
+        </button>
+      </div>
       <div>
         <label>Stroke Color:</label>
         <input v-model="toolSetting.strokeStyle" type="color">

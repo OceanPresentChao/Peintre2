@@ -96,6 +96,10 @@ export class PainterBoard {
     Object.assign(this.context, style)
   }
 
+  setToolType(tool: DrawType) {
+    this.toolType = tool
+  }
+
   setCurrentLayer(id: string) {
     this.currentLayer = this.layerManager.findLayer(id)!
   }

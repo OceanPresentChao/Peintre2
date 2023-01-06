@@ -1,12 +1,13 @@
 import type { PencilElement } from '@/core/PencilElement'
+import type { EraserElement } from '@/core/EraserElement'
 export interface Position {
   x: number
   y: number
 }
 
-export type DrawType = 'line' | 'rect' | 'circle' | 'text' | 'image' | 'pencil'
+export type DrawType = 'line' | 'rect' | 'circle' | 'text' | 'image' | 'pencil' | 'eraser'
 
-export type DrawElement = PencilElement
+export type DrawElement = PencilElement | EraserElement
 
 export interface Snapshot {
   id: string

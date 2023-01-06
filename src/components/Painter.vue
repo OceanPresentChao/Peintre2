@@ -3,7 +3,8 @@ import { cloneDeep } from 'lodash'
 import { PainterBoard } from '@/core/PainterBoard'
 import { defaultStyle } from '@/core/common'
 import { PencilElement } from '@/core/PencilElement'
-import type { ContextStyle, DrawElement } from '@/types'
+import { EraserElement } from '@/core/EraserElement'
+import type { ContextStyle, DrawElement, DrawType } from '@/types'
 import { useSpacepress } from '@/core/tool'
 interface IPainterProps {
   width: number
@@ -45,6 +46,11 @@ function handleMousedown(ev: MouseEvent) {
         case 'image':
         case 'pencil':{
           el = new PencilElement(painterBoard.value.currentLayer.id, cloneDeep(painterBoard.value.style))
+          break
+        }
+        case 'eraser':{
+          el = new EraserElement(painterBoard.value.currentLayer.id, cloneDeep(painterBoard.value.style))
+          break
         }
       }
       painterBoard.value.currentElement = el
@@ -99,6 +105,11 @@ function handleMouseup(ev: MouseEvent) {
   }
 }
 
+function handleSetTool(tool: DrawType) {
+  if (painterBoard.value)
+    painterBoard.value.setToolType(tool)
+}
+
 function handleSetLayer(id: string) {
   painterBoard.value?.setCurrentLayer(id)
 }
@@ -121,16 +132,20 @@ function handleDragLayer() {
     <p>
       layers:{{ painterBoard?.layerManager.layers }}
     </p>
+    <p>
+      tool:{{ painterBoard?.toolType }}
+    </p>
     <div flex>
       <ToolBar
         v-if="painterBoard"
         v-model:setting="painterSetting"
         v-model:layers="painterBoard!.layerManager.layers"
         :cur-layer="painterBoard!.currentLayer"
-        :tool-type="painterBoard!.toolType || 'pencil'"
+        :tool-type="painterBoard!.toolType"
         @add-layer="handleAddLayer"
         @set-layer="handleSetLayer"
         @drag-layer="handleDragLayer"
+        @set-tool="handleSetTool"
       />
       <canvas
         ref="canvasRef" bg-blue
