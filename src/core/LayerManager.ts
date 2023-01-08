@@ -60,4 +60,16 @@ export class LayerManager {
   getSize() {
     return this.layers.length
   }
+
+  clear() {
+    this.layers.length = 0
+    this.map.clear()
+  }
+
+  initMap() {
+    this.map.clear()
+    this.layers.forEach((layer) => {
+      this.map.set(layer.id, layer)
+    })
+  }
 }

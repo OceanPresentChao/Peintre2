@@ -50,6 +50,7 @@ export class PainterBoard {
       lastEnd: { x: -1, y: -1 },
     }
     this.resizeCanvas()
+    this.saveSnapshot()
   }
 
   cleanCanvas(context: CanvasRenderingContext2D = this.context) {
@@ -115,7 +116,12 @@ export class PainterBoard {
   }
 
   saveSnapshot() {
-    this.recordManager.pushSnapshot(this.recordManager.createSnapshot(cloneDeep(this.state)))
+    this.recordManager.pushSnapshot(
+      this.recordManager.createSnapshot(
+        cloneDeep(this.layerManager.layers),
+        cloneDeep(this.state),
+      ),
+    )
   }
 
   getCanvasOffset(): Position {
@@ -169,5 +175,35 @@ export class PainterBoard {
       this.canvas.height = height
     this.offsetCanvas.width = this.canvas.width
     this.offsetCanvas.height = this.canvas.height
+  }
+
+  // 撤回操作可能导致painter的layers和当前state不同步
+  // 将layers同步到state
+  syncLayers() {
+    const snap = this.recordManager.getCurrentSnapshot()
+    if (snap) {
+      this.layerManager.layers = cloneDeep(snap.stack)
+      this.layerManager.initMap()
+    }
+  }
+
+  undo() {
+    const snap = this.recordManager.backward()
+    if (snap) {
+      this.state = cloneDeep(snap.elements)
+      // 只有图层数不同了才需要同步
+      if (this.layerManager.getSize() !== snap.stack.length)
+        this.syncLayers()
+    }
+  }
+
+  redo() {
+    const snap = this.recordManager.forward()
+    if (snap) {
+      this.state = cloneDeep(snap.elements)
+      // 只有图层数不同了才需要同步
+      if (this.layerManager.getSize() !== snap.stack.length)
+        this.syncLayers()
+    }
   }
 }

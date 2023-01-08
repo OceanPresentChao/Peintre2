@@ -8,12 +8,14 @@ interface ToolBarProps {
   layers: Layer[]
   curLayer: Layer
   toolType: DrawType
+  stateLength: number
+  curStateIndex: number
 }
 
 const props = defineProps<ToolBarProps>()
-const emits = defineEmits(['update:layers', 'update:setting', 'addLayer', 'setLayer', 'dragLayer', 'setTool'])
+const emits = defineEmits(['update:layers', 'update:setting', 'addLayer', 'setLayer', 'dragLayer', 'setTool', 'redo', 'undo'])
 const toolSetting = ref<ContextStyle>(unref(props.setting))
-const layerList = ref<Layer[]>(unref(props.layers))
+const layerList = computed(() => unref(props.layers))
 
 watch(toolSetting, (nv) => {
   emits('update:setting', nv)
@@ -50,6 +52,16 @@ watch(layerList, (nv) => {
       <div>
         <button @click="$emit('setTool', 'ellipse')">
           Ellipse
+        </button>
+      </div>
+      <div>
+        <button :disabled="stateLength === 0 || curStateIndex >= stateLength - 1" @click="$emit('redo')">
+          redo
+        </button>
+      </div>
+      <div>
+        <button :disabled="stateLength === 0 || curStateIndex <= 0" @click="$emit('undo')">
+          undo
         </button>
       </div>
       <div>

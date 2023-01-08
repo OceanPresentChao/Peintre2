@@ -67,6 +67,10 @@ function handleMousedown(ev: MouseEvent) {
       }
       painterBoard.value.currentElement = el
       painterBoard.value.addElement(el)
+
+      if (painterBoard.value.recordManager.index !== painterBoard.value.recordManager.snapStack.length - 1)
+        painterBoard.value.recordManager.snapStack.splice(painterBoard.value.recordManager.index + 1)
+
       switch (painterBoard.value.toolType) {
         case 'line':
         case 'rect':
@@ -176,6 +180,20 @@ function handleDragLayer() {
   if (painterBoard.value)
     painterBoard.value.render()
 }
+
+function handleRedo() {
+  if (painterBoard.value) {
+    painterBoard.value.redo()
+    painterBoard.value.render()
+  }
+}
+
+function handleUndo() {
+  if (painterBoard.value) {
+    painterBoard.value.undo()
+    painterBoard.value.render()
+  }
+}
 </script>
 
 <template>
@@ -184,10 +202,29 @@ function handleDragLayer() {
       isSpacePress:{{ isSpacePress }}
     </p>
     <p>
-      layers:{{ painterBoard?.layerManager.layers }}
+      tool:{{ painterBoard?.toolType }}
     </p>
     <p>
-      tool:{{ painterBoard?.toolType }}
+      record len:{{ painterBoard?.recordManager.snapStack.length }}
+    </p>
+    <p text-lg>
+      state:
+    </p>
+    <div v-for="[id, els] in painterBoard?.state" :key="id">
+      layer id:{{ id }}
+      <p v-for="el in els" :key="el.id">
+        {{ el.id }}
+      </p>
+    </div>
+    <div h-10 />
+    <p text-lg>
+      layers:
+    </p>
+    <div v-for="l in painterBoard?.layerManager.layers" :key="l.id">
+      layer id:{{ l.id }}
+    </div>
+    <p>
+      index:{{ painterBoard?.recordManager.index }}
     </p>
     <div flex>
       <ToolBar
@@ -196,10 +233,14 @@ function handleDragLayer() {
         v-model:layers="painterBoard!.layerManager.layers"
         :cur-layer="painterBoard!.currentLayer"
         :tool-type="painterBoard!.toolType"
+        :state-length="painterBoard!.recordManager.snapStack. length"
+        :cur-state-index="painterBoard!.recordManager.index"
         @add-layer="handleAddLayer"
         @set-layer="handleSetLayer"
         @drag-layer="handleDragLayer"
         @set-tool="handleSetTool"
+        @redo="handleRedo"
+        @undo="handleUndo"
       />
       <canvas
         ref="canvasRef" bg-blue

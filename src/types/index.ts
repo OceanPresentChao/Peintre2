@@ -14,7 +14,8 @@ export type DrawElement = PencilElement | EraserElement | RectElement | EllipseE
 
 export interface Snapshot {
   id: string
-  layers: Map<string, DrawElement[]>
+  stack: Layer[]
+  elements: Map<string, DrawElement[]>
 }
 
 export interface Layer {
