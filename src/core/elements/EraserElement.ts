@@ -2,7 +2,6 @@ import { CanvasElement } from './CanvasElement'
 import type { ContextStyle, Position } from '@/types'
 
 export class EraserElement extends CanvasElement {
-  positions: Position[] = []
   constructor(layer: string, style: ContextStyle) {
     super('eraser', layer, style)
   }

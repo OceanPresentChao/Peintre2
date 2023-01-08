@@ -38,6 +38,21 @@ watch(layerList, (nv) => {
         </button>
       </div>
       <div>
+        <button @click="$emit('setTool', 'line')">
+          Line
+        </button>
+      </div>
+      <div>
+        <button @click="$emit('setTool', 'rect')">
+          Rectangle
+        </button>
+      </div>
+      <div>
+        <button @click="$emit('setTool', 'ellipse')">
+          Ellipse
+        </button>
+      </div>
+      <div>
         <label>Stroke Color:</label>
         <input v-model="toolSetting.strokeStyle" type="color">
         <label>Fill Color:</label>

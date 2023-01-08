@@ -2,7 +2,6 @@ import { CanvasElement } from './CanvasElement'
 import type { ContextStyle, Position } from '@/types'
 
 export class PencilElement extends CanvasElement {
-  positions: Position[] = []
   constructor(layer: string, style: ContextStyle) {
     super('pencil', layer, style)
   }

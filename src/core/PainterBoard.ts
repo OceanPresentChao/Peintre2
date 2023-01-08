@@ -80,6 +80,16 @@ export class PainterBoard {
       this.currentElement.addPosition(position)
   }
 
+  setStartPosition(position: Position) {
+    if (this.currentElement)
+      this.currentElement.positions[0] = position
+  }
+
+  setEndPosition(position: Position) {
+    if (this.currentElement)
+      this.currentElement.positions[1] = position
+  }
+
   addElement(el: DrawElement) {
     this.state.get(this.currentLayer.id)!.push(el)
   }

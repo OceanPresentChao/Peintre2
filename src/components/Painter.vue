@@ -6,6 +6,9 @@ import { PencilElement } from '@/core/elements/PencilElement'
 import { EraserElement } from '@/core/elements/EraserElement'
 import type { ContextStyle, DrawElement, DrawType } from '@/types'
 import { useSpacepress } from '@/core/tool'
+import { EllipseElement } from '@/core/elements/EllipseElement'
+import { LineElement } from '@/core/elements/LineElement'
+import { RectElement } from '@/core/elements/RectElement'
 interface IPainterProps {
   width: number
   height: number
@@ -39,9 +42,18 @@ function handleMousedown(ev: MouseEvent) {
     if (!isSpacePress.value) {
       let el: DrawElement
       switch (painterBoard.value.toolType) {
-        case 'line':
-        case 'rect':
-        case 'circle':
+        case 'line':{
+          el = new LineElement(painterBoard.value.currentLayer.id, cloneDeep(painterBoard.value.style))
+          break
+        }
+        case 'rect':{
+          el = new RectElement(painterBoard.value.currentLayer.id, cloneDeep(painterBoard.value.style))
+          break
+        }
+        case 'ellipse':{
+          el = new EllipseElement(painterBoard.value.currentLayer.id, cloneDeep(painterBoard.value.style))
+          break
+        }
         case 'text':
         case 'image':
         case 'pencil':{
@@ -55,7 +67,21 @@ function handleMousedown(ev: MouseEvent) {
       }
       painterBoard.value.currentElement = el
       painterBoard.value.addElement(el)
-      painterBoard.value.addPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+      switch (painterBoard.value.toolType) {
+        case 'line':
+        case 'rect':
+        case 'text':
+        case 'image':
+        case 'ellipse':{
+          painterBoard.value.setStartPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+          break
+        }
+        case 'pencil':
+        case 'eraser':{
+          painterBoard.value.addPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+          break
+        }
+      }
       painterBoard.value.render()
     }
     painterBoard.value.mouseRecord.lastStart = { x: clientX, y: clientY }
@@ -75,7 +101,21 @@ function handleMousemove(ev: MouseEvent) {
       else {
         const el = painterBoard.value.currentElement
         if (el) {
-          painterBoard.value.addPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+          switch (painterBoard.value.toolType) {
+            case 'line':
+            case 'rect':
+            case 'text':
+            case 'image':
+            case 'ellipse':{
+              painterBoard.value.setEndPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+              break
+            }
+            case 'pencil':
+            case 'eraser':{
+              painterBoard.value.addPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+              break
+            }
+          }
           painterBoard.value.render()
         }
       }
@@ -95,7 +135,21 @@ function handleMouseup(ev: MouseEvent) {
     else {
       const el = painterBoard.value.currentElement
       if (el) {
-        el.addPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+        switch (painterBoard.value.toolType) {
+          case 'line':
+          case 'rect':
+          case 'text':
+          case 'image':
+          case 'ellipse':{
+            painterBoard.value.setEndPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+            break
+          }
+          case 'pencil':
+          case 'eraser':{
+            painterBoard.value.addPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+            break
+          }
+        }
         painterBoard.value.render()
         painterBoard.value.currentElement = null
         painterBoard.value.saveSnapshot()

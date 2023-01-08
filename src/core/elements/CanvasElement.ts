@@ -1,11 +1,12 @@
 import { nanoid } from 'nanoid'
-import type { ContextStyle, DrawType } from '@/types'
+import type { ContextStyle, DrawType, Position } from '@/types'
 
 export abstract class CanvasElement {
   id: string
   type: DrawType
   layer: string
   style: ContextStyle
+  positions: Position[] = []
   constructor(type: DrawType, layer: string, style: ContextStyle) {
     this.id = nanoid()
     this.type = type
