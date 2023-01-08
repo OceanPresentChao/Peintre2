@@ -60,4 +60,9 @@ export class LayerManager {
   getSize() {
     return this.layers.length
   }
+
+  clear() {
+    this.layers.length = 0
+    this.map.clear()
+  }
 }

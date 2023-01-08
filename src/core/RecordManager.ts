@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import type { DrawElement, Snapshot } from '@/types'
+import type { DrawElement, Layer, Snapshot } from '@/types'
 export class RecordManager {
   snapStack: Snapshot[] = []
   index: number
@@ -9,12 +9,12 @@ export class RecordManager {
 
   pushSnapshot(data: Snapshot) {
     this.snapStack.push(data)
+    this.index++
   }
 
   backward() {
     if (this.index >= 0)
       this.index--
-
     if (this.index >= 0)
       return this.snapStack[this.index]
     else
@@ -22,13 +22,12 @@ export class RecordManager {
   }
 
   forward() {
-    if (this.index < this.snapStack.length - 1) {
+    if (this.index < this.snapStack.length)
       this.index++
+    if (this.index < this.snapStack.length)
       return this.snapStack[this.index]
-    }
-    else {
+    else
       return null
-    }
   }
 
   getCurrentSnapshot() {
@@ -38,10 +37,11 @@ export class RecordManager {
       return null
   }
 
-  createSnapshot(layers: Map<string, DrawElement[]>): Snapshot {
+  createSnapshot(stack: Layer[], elements: Map<string, DrawElement[]>): Snapshot {
     return {
       id: nanoid(),
-      layers,
+      stack,
+      elements,
     }
   }
 }
