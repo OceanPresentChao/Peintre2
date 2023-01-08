@@ -1,5 +1,5 @@
-import type { PencilElement } from '@/core/PencilElement'
-import type { EraserElement } from '@/core/EraserElement'
+import type { PencilElement } from '@/core/elements/PencilElement'
+import type { EraserElement } from '@/core/elements/EraserElement'
 export interface Position {
   x: number
   y: number

@@ -2,8 +2,8 @@
 import { cloneDeep } from 'lodash'
 import { PainterBoard } from '@/core/PainterBoard'
 import { defaultStyle } from '@/core/common'
-import { PencilElement } from '@/core/PencilElement'
-import { EraserElement } from '@/core/EraserElement'
+import { PencilElement } from '@/core/elements/PencilElement'
+import { EraserElement } from '@/core/elements/EraserElement'
 import type { ContextStyle, DrawElement, DrawType } from '@/types'
 import { useSpacepress } from '@/core/tool'
 interface IPainterProps {
