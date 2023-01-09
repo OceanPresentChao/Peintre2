@@ -13,7 +13,7 @@ interface ToolBarProps {
 }
 
 const props = defineProps<ToolBarProps>()
-const emits = defineEmits(['addLayer', 'setLayer', 'dragLayer', 'setTool', 'redo', 'undo', 'setStyle'])
+const emits = defineEmits(['addLayer', 'setLayer', 'dragLayer', 'setTool', 'redo', 'undo', 'setStyle', 'save'])
 const toolSetting = computed(() => unref(props.setting))
 
 watch(toolSetting, (nv) => {
@@ -57,6 +57,11 @@ watch(toolSetting, (nv) => {
       <div>
         <button :disabled="stateLength === 0 || curStateIndex <= 0" @click="$emit('undo')">
           undo
+        </button>
+      </div>
+      <div>
+        <button @click="$emit('save')">
+          save
         </button>
       </div>
       <div>

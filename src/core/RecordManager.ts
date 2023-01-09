@@ -62,9 +62,14 @@ export class RecordManager {
   }
 
   deserializeSnap(str: string): Snapshot {
-    const obj = JSON.parse(str)
+    const obj = JSON.parse(str) as {
+      id: string
+      stack: Layer[]
+      elements: [string, string[]][]
+    }
     const snap: Record<string, any> = {}
     Object.assign(snap, obj)
+
     snap.elements = snap.elements.map(([key, els]: [string, string[]]) => {
       return [key, els.map(el => deserializeElement(el))]
     })
@@ -73,6 +78,7 @@ export class RecordManager {
       map.set(key, els)
     })
     snap.elements = map
+
     return snap as Snapshot
   }
 }

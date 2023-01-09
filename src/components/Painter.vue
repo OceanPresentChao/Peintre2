@@ -197,6 +197,15 @@ function handleUndo() {
     painterBoard.value.render()
   }
 }
+
+function handleSaveImage() {
+  if (painterBoard.value) {
+    const a = document.createElement('a')
+    a.href = painterBoard.value.canvas.toDataURL()
+    a.download = 'peintre.png'
+    a.click()
+  }
+}
 </script>
 
 <template>
@@ -245,6 +254,7 @@ function handleUndo() {
         @set-style="handleSetStyle"
         @redo="handleRedo"
         @undo="handleUndo"
+        @save="handleSaveImage"
       />
       <canvas
         ref="canvasRef" bg-blue
