@@ -21,6 +21,13 @@ export class RectElement extends CanvasElement {
   setEndPosition(position: Position) {
     this.positions[1] = position
   }
+
+  static deserialize(data: string): RectElement {
+    const oldObj = JSON.parse(data) as RectElement
+    const el = new RectElement(oldObj.layer, oldObj.style)
+    Object.assign(el, oldObj)
+    return el
+  }
 }
 
 export function renderRect(context: CanvasRenderingContext2D, instance: RectElement) {

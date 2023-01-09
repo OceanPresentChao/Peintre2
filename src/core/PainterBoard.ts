@@ -1,7 +1,8 @@
 import { cloneDeep } from 'lodash'
 import { LayerManager } from './LayerManager'
 import { RecordManager } from './RecordManager'
-import { defaultStyle } from './common'
+import { KEY_PREFIX, defaultStyle } from './common'
+import { Storage } from './storage'
 import type { ContextStyle, DrawElement, DrawType, Layer, Position } from '@/types'
 
 interface PainterBoardOptions {
@@ -28,6 +29,8 @@ export class PainterBoard {
     lastEnd: Position
   }
 
+  version = '0.0.1'
+
   constructor(canvas: HTMLCanvasElement, _?: PainterBoardOptions) {
     this.canvas = canvas
     this.context = canvas.getContext('2d')!
@@ -37,7 +40,6 @@ export class PainterBoard {
     this.layerManager = new LayerManager()
     this.toolType = 'pencil'
     this.state = new Map()
-    this.currentLayer = this.addLayer('layer1')
     this.style = defaultStyle
     this.setStyle(defaultStyle)
     this.originPosition = {
@@ -50,7 +52,16 @@ export class PainterBoard {
       lastEnd: { x: -1, y: -1 },
     }
     this.resizeCanvas()
-    this.saveSnapshot()
+    if (!this.hasCache()) {
+      // 先存储一张空白的快照
+      this.currentLayer = this.addLayer('layer1')
+      this.saveSnapshot()
+    }
+    else {
+      this.loadCache()
+      this.currentLayer = this.layerManager.findLayer(0)!
+    }
+    this.render()
   }
 
   cleanCanvas(context: CanvasRenderingContext2D = this.context) {
@@ -205,5 +216,45 @@ export class PainterBoard {
       if (this.layerManager.getSize() !== snap.stack.length)
         this.syncLayers()
     }
+  }
+
+  /**
+   * 本地存储的需要转换成标准的JSON格式，存储的cache格式如下
+   * 关键在于snap的elements从map转换成数组了
+   * interface StorageState {
+    snap: {
+      id: string
+      stack: Layer[]
+      elements: [string, string[](serialize DrawElement)][]
+    }
+    toolType: DrawType
+    style: ContextStyle
+  }
+   */
+  cache() {
+    const snap = this.recordManager.getCurrentSnapshot()
+    const state: Record<string, any> = {
+      snap: snap ? this.recordManager.serializeSnap(snap) : -1,
+      toolType: this.toolType,
+      style: this.style,
+    }
+    Storage.setStorage(KEY_PREFIX + this.version, JSON.stringify(state))
+  }
+
+  loadCache() {
+    const obj: Record<string, any> = JSON.parse(Storage.getStorage(KEY_PREFIX + this.version) || '{}')
+    if (typeof obj.snap === 'string') {
+      obj.snap = this.recordManager.deserializeSnap(obj.snap)
+      this.state = obj.snap.elements
+      this.layerManager.layers = obj.snap.stack
+      this.toolType = obj.toolType
+      this.setStyle(obj.style)
+      this.saveSnapshot()
+      this.syncLayers()
+    }
+  }
+
+  hasCache() {
+    return !!Storage.getStorage(KEY_PREFIX + this.version)
   }
 }

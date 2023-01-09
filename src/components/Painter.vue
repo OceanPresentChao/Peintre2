@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { cloneDeep } from 'lodash'
 import { PainterBoard } from '@/core/PainterBoard'
-import { defaultStyle } from '@/core/common'
 import { PencilElement } from '@/core/elements/PencilElement'
 import { EraserElement } from '@/core/elements/EraserElement'
 import type { ContextStyle, DrawElement, DrawType } from '@/types'
-import { useSpacepress } from '@/core/tool'
+import { useSpacePress, useThrottleFn } from '@/core/tool'
 import { EllipseElement } from '@/core/elements/EllipseElement'
 import { LineElement } from '@/core/elements/LineElement'
 import { RectElement } from '@/core/elements/RectElement'
@@ -18,23 +17,17 @@ const props = withDefaults(defineProps<IPainterProps>(), {
   height: 600,
 })
 
-const painterSetting = ref<ContextStyle>(cloneDeep(defaultStyle))
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const painterBoard = ref<PainterBoard | null>(null)
-const isSpacePress = useSpacepress()
+const isSpacePress = useSpacePress()
 const isMouseDown = ref(false)
 
 onMounted(() => {
-  if (canvasRef.value) {
+  if (canvasRef.value)
     painterBoard.value = new PainterBoard(canvasRef.value)
-    watch(painterSetting, (nv) => {
-      if (painterBoard.value)
-        painterBoard.value.setStyle(nv)
-    }, { immediate: true, deep: true })
-  }
 })
 
-function handleMousedown(ev: MouseEvent) {
+function onMousedown(ev: MouseEvent) {
   ev.preventDefault()
   isMouseDown.value = true
   const { clientX, clientY } = ev
@@ -92,7 +85,7 @@ function handleMousedown(ev: MouseEvent) {
   }
 }
 
-function handleMousemove(ev: MouseEvent) {
+function onMousemove(ev: MouseEvent) {
   ev.preventDefault()
   const { clientX, clientY } = ev
   if (painterBoard.value) {
@@ -128,7 +121,7 @@ function handleMousemove(ev: MouseEvent) {
   }
 }
 
-function handleMouseup(ev: MouseEvent) {
+function onMouseup(ev: MouseEvent) {
   ev.preventDefault()
   isMouseDown.value = false
   const { clientX, clientY } = ev
@@ -157,15 +150,25 @@ function handleMouseup(ev: MouseEvent) {
         painterBoard.value.render()
         painterBoard.value.currentElement = null
         painterBoard.value.saveSnapshot()
+        painterBoard.value.cache()
       }
     }
     painterBoard.value.mouseRecord.lastEnd = { x: clientX, y: clientY }
   }
 }
 
+const handleMousedown = onMousedown
+const handleMousemove = useThrottleFn(onMousemove, 50)
+const handleMouseup = onMouseup
+
 function handleSetTool(tool: DrawType) {
   if (painterBoard.value)
     painterBoard.value.setToolType(tool)
+}
+
+function handleSetStyle(style: ContextStyle) {
+  if (painterBoard.value)
+    painterBoard.value.setStyle(style)
 }
 
 function handleSetLayer(id: string) {
@@ -229,8 +232,8 @@ function handleUndo() {
     <div flex>
       <ToolBar
         v-if="painterBoard"
-        v-model:setting="painterSetting"
         v-model:layers="painterBoard!.layerManager.layers"
+        :setting="painterBoard!.style"
         :cur-layer="painterBoard!.currentLayer"
         :tool-type="painterBoard!.toolType"
         :state-length="painterBoard!.recordManager.snapStack. length"
@@ -239,6 +242,7 @@ function handleUndo() {
         @set-layer="handleSetLayer"
         @drag-layer="handleDragLayer"
         @set-tool="handleSetTool"
+        @set-style="handleSetStyle"
         @redo="handleRedo"
         @undo="handleUndo"
       />

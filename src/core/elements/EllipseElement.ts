@@ -21,6 +21,17 @@ export class EllipseElement extends CanvasElement {
   setEndPosition(position: Position) {
     this.positions[1] = position
   }
+
+  serialize(): string {
+    return JSON.stringify(this)
+  }
+
+  static deserialize(data: string): EllipseElement {
+    const oldObj = JSON.parse(data) as EllipseElement
+    const el = new EllipseElement(oldObj.layer, oldObj.style)
+    Object.assign(el, oldObj)
+    return el
+  }
 }
 
 export function renderEllipse(context: CanvasRenderingContext2D, instance: EllipseElement) {

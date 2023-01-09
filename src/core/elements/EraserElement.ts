@@ -13,6 +13,13 @@ export class EraserElement extends CanvasElement {
   render(context: CanvasRenderingContext2D) {
     renderEraser(context, this)
   }
+
+  static deserialize(data: string): EraserElement {
+    const oldObj = JSON.parse(data) as EraserElement
+    const el = new EraserElement(oldObj.layer, oldObj.style)
+    Object.assign(el, oldObj)
+    return el
+  }
 }
 
 export function renderEraser(context: CanvasRenderingContext2D, instance: EraserElement) {

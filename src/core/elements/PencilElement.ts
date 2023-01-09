@@ -13,6 +13,13 @@ export class PencilElement extends CanvasElement {
   render(context: CanvasRenderingContext2D) {
     renderPencil(context, this)
   }
+
+  static deserialize(data: string): PencilElement {
+    const oldObj = JSON.parse(data) as PencilElement
+    const el = new PencilElement(oldObj.layer, oldObj.style)
+    Object.assign(el, oldObj)
+    return el
+  }
 }
 
 export function renderPencil(context: CanvasRenderingContext2D, instance: PencilElement) {

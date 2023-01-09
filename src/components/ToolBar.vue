@@ -13,12 +13,12 @@ interface ToolBarProps {
 }
 
 const props = defineProps<ToolBarProps>()
-const emits = defineEmits(['update:layers', 'update:setting', 'addLayer', 'setLayer', 'dragLayer', 'setTool', 'redo', 'undo'])
-const toolSetting = ref<ContextStyle>(unref(props.setting))
+const emits = defineEmits(['update:layers', 'addLayer', 'setLayer', 'dragLayer', 'setTool', 'redo', 'undo', 'setStyle'])
+const toolSetting = computed(() => unref(props.setting))
 const layerList = computed(() => unref(props.layers))
 
 watch(toolSetting, (nv) => {
-  emits('update:setting', nv)
+  emits('setStyle', nv)
 }, { deep: true })
 
 watch(layerList, (nv) => {

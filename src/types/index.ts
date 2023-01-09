@@ -29,3 +29,13 @@ export interface ContextStyle {
   strokeStyle: string
   fillStyle: string
 }
+
+export interface StorageState {
+  snap: {
+    id: string
+    stack: Layer[]
+    elements: [string, DrawElement[]][]
+  }
+  toolType: DrawType
+  style: ContextStyle
+}

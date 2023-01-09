@@ -5,3 +5,5 @@ export const defaultStyle: ContextStyle = {
   strokeStyle: '#000000',
   fillStyle: '#000000',
 }
+
+export const KEY_PREFIX = 'PEINTRE2_'

@@ -21,6 +21,13 @@ export class LineElement extends CanvasElement {
   setEndPosition(position: Position) {
     this.positions[1] = position
   }
+
+  static deserialize(data: string): LineElement {
+    const oldObj = JSON.parse(data) as LineElement
+    const el = new LineElement(oldObj.layer, oldObj.style)
+    Object.assign(el, oldObj)
+    return el
+  }
 }
 
 export function renderLine(context: CanvasRenderingContext2D, instance: LineElement) {

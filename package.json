@@ -31,7 +31,6 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@vueuse/core": "^8.9.4",
     "vue": "^3.2.45",
     "vue-i18n": "^9.2.2",
     "vuedraggable": "^4.1.0"

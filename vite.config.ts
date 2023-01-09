@@ -19,7 +19,7 @@ export default defineConfig({
       dts: 'src/components.d.ts',
     }),
     AutoImport({
-      imports: ['vue', 'vue-i18n', '@vueuse/head', '@vueuse/core'],
+      imports: ['vue', 'vue-i18n'],
       // 可以选择auto-import.d.ts生成的位置，使用ts建议设置为'src/auto-import.d.ts'
       dts: 'src/auto-import.d.ts',
     }),

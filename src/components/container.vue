@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const { x, y } = useMouse({ type: 'client' })
+import { useMouse } from '@/core/tool'
+const client = useMouse()
 </script>
 
 <template>
@@ -8,7 +9,7 @@ const { x, y } = useMouse({ type: 'client' })
       Peintre
     </p>
     <p text-xl>
-      Current Mouse x:{{ x }} y: {{ y }}
+      Current Mouse x:{{ client.x }} y: {{ client.y }}
     </p>
     <div flex items-center justify-center>
       <slot />

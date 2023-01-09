@@ -27,7 +27,7 @@ export function deepCopy<T>(instance: T, map = new WeakMap<any, any>()): T {
   return instance
 }
 
-export function useSpacepress(): Ref<boolean> {
+export function useSpacePress(): Ref<boolean> {
   const isSpacePress = ref(false)
   const onKeydown = (e: KeyboardEvent) => {
     if (e.code === 'Space')
@@ -48,4 +48,32 @@ export function useSpacepress(): Ref<boolean> {
     }
   })
   return isSpacePress
+}
+
+export function useThrottleFn<T extends (...args: any[]) => any>(fn: T, wait: number): T {
+  let timer: number | null = null
+  return function (...args: any[]) {
+    if (timer)
+      return
+    timer = window.setTimeout(() => {
+      timer = null
+    }, wait)
+    fn(...args)
+  } as T
+}
+
+export function useMouse(): Ref<{ x: number; y: number }> {
+  const client = ref({ x: 0, y: 0 })
+  const onMouseMove = (e: MouseEvent) => {
+    client.value.x = e.clientX
+    client.value.y = e.clientY
+  }
+  if (window)
+    window.addEventListener('mousemove', onMouseMove)
+
+  onBeforeUnmount(() => {
+    if (window)
+      window.removeEventListener('mousemove', onMouseMove)
+  })
+  return client
 }
