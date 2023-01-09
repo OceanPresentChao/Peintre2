@@ -158,7 +158,7 @@ function onMouseup(ev: MouseEvent) {
 }
 
 const handleMousedown = onMousedown
-const handleMousemove = useThrottleFn(onMousemove, 50)
+const handleMousemove = useThrottleFn(onMousemove, 10)
 const handleMouseup = onMouseup
 
 function handleSetTool(tool: DrawType) {
@@ -232,7 +232,7 @@ function handleUndo() {
     <div flex>
       <ToolBar
         v-if="painterBoard"
-        v-model:layers="painterBoard!.layerManager.layers"
+        :layers="painterBoard!.layerManager.layers"
         :setting="painterBoard!.style"
         :cur-layer="painterBoard!.currentLayer"
         :tool-type="painterBoard!.toolType"

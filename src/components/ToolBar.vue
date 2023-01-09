@@ -13,17 +13,12 @@ interface ToolBarProps {
 }
 
 const props = defineProps<ToolBarProps>()
-const emits = defineEmits(['update:layers', 'addLayer', 'setLayer', 'dragLayer', 'setTool', 'redo', 'undo', 'setStyle'])
+const emits = defineEmits(['addLayer', 'setLayer', 'dragLayer', 'setTool', 'redo', 'undo', 'setStyle'])
 const toolSetting = computed(() => unref(props.setting))
-const layerList = computed(() => unref(props.layers))
 
 watch(toolSetting, (nv) => {
   emits('setStyle', nv)
 }, { deep: true })
-
-watch(layerList, (nv) => {
-  emits('update:layers', nv)
-})
 </script>
 
 <template>
@@ -81,7 +76,7 @@ watch(layerList, (nv) => {
       </div>
       <div>
         <draggable
-          v-model="layerList"
+          :list="layers"
           item-key="id"
           :component-data="{ tag: 'div', name: 'flip-list', type: 'transition' }"
           ghost-class="ghost"
