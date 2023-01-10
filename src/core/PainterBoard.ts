@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash'
 import { LayerManager } from './LayerManager'
 import { RecordManager } from './RecordManager'
+import { SelectElement } from './select'
 import { KEY_PREFIX, defaultStyle } from './common'
 import { Storage } from './storage'
 import type { ContextStyle, DrawElement, DrawType, Layer, Position } from '@/types'
@@ -29,6 +30,8 @@ export class PainterBoard {
     lastEnd: Position
   }
 
+  select: SelectElement
+
   version = '0.0.1'
 
   constructor(canvas: HTMLCanvasElement, _?: PainterBoardOptions) {
@@ -38,6 +41,7 @@ export class PainterBoard {
     this.offsetContext = this.offsetCanvas.getContext('2d')!
     this.recordManager = new RecordManager()
     this.layerManager = new LayerManager()
+    this.select = new SelectElement(this)
     this.toolType = 'pencil'
     this.state = new Map()
     this.style = defaultStyle
@@ -157,6 +161,11 @@ export class PainterBoard {
     }
   }
 
+  /**
+   * 将client坐标转换为在考虑了原点偏移后的canvas中绘制的坐标（基于(0,0)原点）
+   * @param position
+   * @returns Position
+   */
   clientToCanvas(position: Position): Position {
     const canvasOffset = this.getCanvasOffset()
     return {
@@ -221,14 +230,7 @@ export class PainterBoard {
   /**
    * 本地存储的需要转换成标准的JSON格式，存储的cache格式如下
    * 关键在于snap的elements从map转换成数组了
-   * interface StorageState {
-    snap: {
-      id: string
-      stack: Layer[]
-      elements: [string, string[](serialize DrawElement)][]
-    }
-    toolType: DrawType
-    style: ContextStyle
+   * interface StorageState
   }
    */
   cache() {
@@ -237,6 +239,7 @@ export class PainterBoard {
       snap: snap ? this.recordManager.serializeSnap(snap) : -1,
       toolType: this.toolType,
       style: this.style,
+      originPosition: this.originPosition,
     }
     Storage.setStorage(KEY_PREFIX + this.version, JSON.stringify(state))
   }
@@ -248,6 +251,8 @@ export class PainterBoard {
       this.state = obj.snap.elements
       this.layerManager.layers = obj.snap.stack
       this.toolType = obj.toolType
+      this.originPosition = obj.originPosition
+      this.translateOriginPosition()
       this.setStyle(obj.style)
       this.saveSnapshot()
       this.syncLayers()

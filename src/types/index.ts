@@ -8,7 +8,7 @@ export interface Position {
   y: number
 }
 
-export type DrawType = 'line' | 'rect' | 'ellipse' | 'text' | 'image' | 'pencil' | 'eraser'
+export type DrawType = 'line' | 'rect' | 'ellipse' | 'text' | 'image' | 'pencil' | 'eraser' | 'select'
 
 export type DrawElement = PencilElement | EraserElement | RectElement | EllipseElement | LineElement
 
@@ -38,4 +38,16 @@ export interface StorageState {
   }
   toolType: DrawType
   style: ContextStyle
+  originPosition: Position
+}
+
+export type TransformType = 'move' | 'null' | 'left-bottom' | 'right-bottom' | 'left-top' | 'right-top'
+
+export interface ElementRect {
+  left: number
+  top: number
+  right: number
+  bottom: number
+  width: number
+  height: number
 }
