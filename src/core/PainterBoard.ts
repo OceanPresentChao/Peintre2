@@ -87,7 +87,7 @@ export class PainterBoard {
     els.forEach((el) => {
       el.render(this.offsetContext)
     })
-    this.context.drawImage(this.offsetCanvas, 0, 0)
+    this.context.drawImage(this.offsetCanvas, -this.originPosition.x, -this.originPosition.y)
   }
 
   // Position是相对于 画布原点为（0,0）时 的坐标。不受拖拽画布的影响
