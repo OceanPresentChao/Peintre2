@@ -4,6 +4,7 @@ import { RecordManager } from './RecordManager'
 import { SelectElement } from './select'
 import { KEY_PREFIX, defaultStyle } from './common'
 import { Storage } from './storage'
+import { Cursor } from './cursor'
 import type { ContextStyle, DrawElement, DrawType, Layer, Position } from '@/types'
 
 interface PainterBoardOptions {
@@ -31,6 +32,7 @@ export class PainterBoard {
   }
 
   select: SelectElement
+  cursor: Cursor
 
   version = '0.0.1'
 
@@ -42,6 +44,7 @@ export class PainterBoard {
     this.recordManager = new RecordManager()
     this.layerManager = new LayerManager()
     this.select = new SelectElement(this)
+    this.cursor = new Cursor(this.canvas)
     this.toolType = 'pencil'
     this.state = new Map()
     this.style = defaultStyle

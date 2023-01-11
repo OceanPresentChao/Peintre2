@@ -1,44 +1,64 @@
 import type { PainterBoard } from './PainterBoard'
 import { isInsideRect, movePoint, pointDistance, pointToLineDist } from './tool'
 import { RECT_MIN_SIZE, selectRectStyle } from './common'
+import { getResizeCursorType } from '@/core/cursor'
 import type { DrawElement, ElementRect, Position, TransformType } from '@/types'
 export class SelectElement {
   board: PainterBoard
   hoverElIndex: number
   selectElIndex: number
-  startAxis: Position
   transformType: TransformType
   constructor(board: PainterBoard) {
     this.board = board
     this.hoverElIndex = this.selectElIndex = -1
-    this.startAxis = {
-      x: 0, y: 0,
-    }
     this.transformType = 'null'
   }
 
   hoverSelectElement(position: Position) {
     const candidates = this.getCandidateElements()
+    let flag = false
+    // 寻找hover到的元素
     for (let i = 0; i < candidates.length; i++) {
       if (this.isTouched(position, candidates[i])) {
+        flag = true
         this.hoverElIndex = i
-        return
+        this.board.cursor.set('pointer')
+        break
       }
     }
-    this.hoverElIndex = -1
+    // 如果当前已选中了元素，根据transformType修改鼠标样式
+    if (this.selectElIndex !== -1) {
+      const originPos = movePoint(position, this.board.originPosition)
+      const transformType = this.getResizeType(
+        originPos,
+        this.getSelectedElement()!.rect,
+        this.getSelectedElement()!.style.lineWidth / 2 < 10 ? 10 : this.getSelectedElement()!.style.lineWidth / 2,
+      )
+      this.transformType = transformType
+      const cursor = getResizeCursorType(this.transformType)
+      this.board.cursor.set(cursor)
+    }
+    if (!flag)
+      this.hoverElIndex = -1
+
+    // 既没有hover到元素，也没有选中元素，鼠标样式为默认
+    if (!flag && this.selectElIndex === -1)
+      this.board.cursor.set('auto')
   }
 
-  clickElement(clientPosition: Position) {
-    const canvasPos = this.board.clientToCanvas(clientPosition)
-    const originPos = movePoint(canvasPos, this.board.originPosition)
+  clickElement(position: Position) {
+    const originPos = movePoint(position, this.board.originPosition)
     // 如果已经有选择了的元素，判断当前的点击位置
     if (this.selectElIndex !== -1) {
       const transformType = this.getResizeType(
         originPos,
         this.getSelectedElement()!.rect,
-        this.getSelectedElement()!.style.lineWidth / 2,
+        this.getSelectedElement()!.style.lineWidth / 2 < 10 ? 10 : this.getSelectedElement()!.style.lineWidth / 2,
       )
       this.transformType = transformType
+      const cursor = getResizeCursorType(this.transformType)
+      this.board.cursor.set(cursor)
+
       if (this.transformType === 'null') {
         // 点击其他元素
         if (this.hoverElIndex !== -1)
@@ -52,7 +72,6 @@ export class SelectElement {
       if (this.hoverElIndex !== -1)
         this.selectElIndex = this.hoverElIndex
     }
-    this.startAxis = clientPosition
   }
 
   moveSelectedElement(offset: Position) {

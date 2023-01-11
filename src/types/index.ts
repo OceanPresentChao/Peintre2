@@ -51,3 +51,5 @@ export interface ElementRect {
   width: number
   height: number
 }
+
+export type CursorType = 'auto' | 'move' | 'nesw-resize' | 'nwse-resize' | 'grab' | 'grabbing' | 'pointer'

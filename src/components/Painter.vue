@@ -22,6 +22,15 @@ const painterBoard = ref<PainterBoard | null>(null)
 const isSpacePress = useSpacePress()
 const isMouseDown = ref(false)
 
+watch(isSpacePress, (nv) => {
+  if (painterBoard.value) {
+    if (nv)
+      painterBoard.value.cursor.set('grab')
+    else
+      painterBoard.value.cursor.set('auto')
+  }
+})
+
 onMounted(() => {
   if (canvasRef.value)
     painterBoard.value = new PainterBoard(canvasRef.value)
@@ -84,11 +93,14 @@ function onMousedown(ev: MouseEvent) {
           break
         }
         case 'select':{
-          painterBoard.value.select.clickElement({ x: clientX, y: clientY })
+          painterBoard.value.select.clickElement(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
           break
         }
       }
       painterBoard.value.render()
+    }
+    else {
+      painterBoard.value.cursor.set('grabbing')
     }
     painterBoard.value.mouseRecord.lastStart = { x: clientX, y: clientY }
   }
@@ -124,8 +136,6 @@ function onMousemove(ev: MouseEvent) {
           }
           case 'select':{
             const selectEl = painterBoard.value.select.getSelectedElement()
-            const distX = clientX - painterBoard.value.mouseRecord.lastStart.x
-            const distY = clientY - painterBoard.value.mouseRecord.lastStart.y
             const offsetX = clientX - painterBoard.value.mouseRecord.lastMove.x
             const offsetY = clientY - painterBoard.value.mouseRecord.lastMove.y
             if (selectEl) {
@@ -138,26 +148,26 @@ function onMousemove(ev: MouseEvent) {
                   break
                 }
                 case 'left-bottom':{
-                  const scaleX = (selectEl.rect.width - distX) / selectEl.rect.width
-                  const scaleY = (selectEl.rect.height + distY) / selectEl.rect.height
+                  const scaleX = (selectEl.rect.width - offsetX) / selectEl.rect.width
+                  const scaleY = (selectEl.rect.height + offsetY) / selectEl.rect.height
                   painterBoard.value.select.resizeSelectedElement(scaleX, scaleY)
                   break
                 }
                 case 'right-bottom':{
-                  const scaleX = (selectEl.rect.width + distX) / selectEl.rect.width
-                  const scaleY = (selectEl.rect.height + distY) / selectEl.rect.height
+                  const scaleX = (selectEl.rect.width + offsetX) / selectEl.rect.width
+                  const scaleY = (selectEl.rect.height + offsetY) / selectEl.rect.height
                   painterBoard.value.select.resizeSelectedElement(scaleX, scaleY)
                   break
                 }
                 case 'left-top':{
-                  const scaleX = (selectEl.rect.width - distX) / selectEl.rect.width
-                  const scaleY = (selectEl.rect.height - distY) / selectEl.rect.height
+                  const scaleX = (selectEl.rect.width - offsetX) / selectEl.rect.width
+                  const scaleY = (selectEl.rect.height - offsetY) / selectEl.rect.height
                   painterBoard.value.select.resizeSelectedElement(scaleX, scaleY)
                   break
                 }
                 case 'right-top':{
-                  const scaleX = (selectEl.rect.width + distX) / selectEl.rect.width
-                  const scaleY = (selectEl.rect.height - distY) / selectEl.rect.height
+                  const scaleX = (selectEl.rect.width + offsetX) / selectEl.rect.width
+                  const scaleY = (selectEl.rect.height - offsetY) / selectEl.rect.height
                   painterBoard.value.select.resizeSelectedElement(scaleX, scaleY)
                   break
                 }
@@ -310,6 +320,14 @@ function handleSaveImage() {
       </p>
     </div> -->
 
+    <div>
+      <p>
+        {{ painterBoard?.select.transformType }}
+      </p>
+      <p>
+        {{ painterBoard?.select.getSelectedElement()?.rect }}
+      </p>
+    </div>
     <div flex>
       <ToolBar
         v-if="painterBoard"
