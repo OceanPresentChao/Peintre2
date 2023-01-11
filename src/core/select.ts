@@ -104,6 +104,7 @@ export class SelectElement {
             pos.y *= scaleY
             el.updateRect(pos)
           })
+
           const offsetX = el.rect.left - oldRect.left
           const offsetY = el.rect.top - oldRect.top
 
@@ -116,40 +117,44 @@ export class SelectElement {
           break
         }
         case 'line':
+        case 'ellipse':
         case 'rect':{
+          // 现将矩形沿右下角缩放，再根据transformType调整位置
           const maxXP = el.positions[0].x > el.positions[1].x ? el.positions[0] : el.positions[1]
           const maxYP = el.positions[0].y > el.positions[1].y ? el.positions[0] : el.positions[1]
-          const minXP = el.positions[0].x < el.positions[1].x ? el.positions[0] : el.positions[1]
-          const minYP = el.positions[0].y < el.positions[1].y ? el.positions[0] : el.positions[1]
-          switch (this.transformType) {
-            case 'left-bottom':{
-              maxXP.x *= scaleX
-              minYP.y *= scaleY
-              break
-            }
-            case 'right-bottom':{
-              minXP.x *= scaleX
-              minYP.y *= scaleY
-              break
-            }
-            case 'left-top':{
-              maxXP.x *= scaleX
-              maxYP.y *= scaleY
-              break
-            }
-            case 'right-top':{
-              minXP.x *= scaleX
-              maxYP.y *= scaleY
-              break
-            }
-          }
+          maxXP.x *= scaleX
+          maxYP.y *= scaleY
           el.resetRect()
           el.positions.forEach((p) => {
             el.updateRect(p)
           })
+
+          const offsetX = el.rect.width - oldRect.width
+          const offsetY = el.rect.height - oldRect.height
+          el.resetRect()
+          el.positions.forEach((pos) => {
+            switch (this.transformType) {
+              case 'left-bottom':{
+                pos.x -= offsetX
+                break
+              }
+              case 'right-bottom':{
+                break
+              }
+              case 'left-top':{
+                pos.x -= offsetX
+                pos.y -= offsetY
+                break
+              }
+              case 'right-top':{
+                pos.y += offsetY
+                break
+              }
+            }
+            el.updateRect(pos)
+          })
           break
         }
-        case 'ellipse':
         case 'text':
         case 'image':
         case 'select':{
@@ -208,8 +213,8 @@ export class SelectElement {
         || this.isTouchLine(position, line4, threshold)
       }
       case 'ellipse':{
-        const x = element.positions[0].x
-        const y = element.positions[0].y
+        const x = (element.positions[0].x + element.positions[1].x) / 2
+        const y = (element.positions[0].y + element.positions[1].y) / 2
         const a = Math.abs(Math.round((element.positions[1].x - element.positions[0].x) / 2))
         const b = Math.abs(Math.round((element.positions[1].y - element.positions[0].y) / 2))
         const sub = (position.x - x) ** 2 / a ** 2 + (position.y - y) ** 2 / b ** 2

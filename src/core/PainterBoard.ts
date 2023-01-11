@@ -113,7 +113,10 @@ export class PainterBoard {
   setEndPosition(position: Position) {
     if (this.currentElement) {
       this.currentElement.positions[1] = position
-      this.currentElement.updateRect(position)
+      this.currentElement.resetRect()
+      this.currentElement.positions.forEach((p) => {
+        this.currentElement?.updateRect(p)
+      })
     }
   }
 
