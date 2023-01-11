@@ -33,7 +33,7 @@ function onMousedown(ev: MouseEvent) {
   const { clientX, clientY } = ev
   if (painterBoard.value) {
     if (!isSpacePress.value) {
-      let el: DrawElement
+      let el: DrawElement | null = null
       switch (painterBoard.value.toolType) {
         case 'line':{
           el = new LineElement(painterBoard.value.currentLayer.id, cloneDeep(painterBoard.value.style))
@@ -57,9 +57,14 @@ function onMousedown(ev: MouseEvent) {
           el = new EraserElement(painterBoard.value.currentLayer.id, cloneDeep(painterBoard.value.style))
           break
         }
+        case 'select':{
+          break
+        }
       }
-      painterBoard.value.currentElement = el
-      painterBoard.value.addElement(el)
+      if (el) {
+        painterBoard.value.currentElement = el
+        painterBoard.value.addElement(el)
+      }
 
       if (painterBoard.value.recordManager.index !== painterBoard.value.recordManager.snapStack.length - 1)
         painterBoard.value.recordManager.snapStack.splice(painterBoard.value.recordManager.index + 1)
@@ -76,6 +81,10 @@ function onMousedown(ev: MouseEvent) {
         case 'pencil':
         case 'eraser':{
           painterBoard.value.addPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+          break
+        }
+        case 'select':{
+          painterBoard.value.select.clickElement({ x: clientX, y: clientY })
           break
         }
       }
@@ -97,23 +106,83 @@ function onMousemove(ev: MouseEvent) {
       }
       else {
         const el = painterBoard.value.currentElement
-        if (el) {
-          switch (painterBoard.value.toolType) {
-            case 'line':
-            case 'rect':
-            case 'text':
-            case 'image':
-            case 'ellipse':{
+        switch (painterBoard.value.toolType) {
+          case 'line':
+          case 'rect':
+          case 'text':
+          case 'image':
+          case 'ellipse':{
+            if (el)
               painterBoard.value.setEndPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
-              break
-            }
-            case 'pencil':
-            case 'eraser':{
-              painterBoard.value.addPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
-              break
-            }
+            break
           }
-          painterBoard.value.render()
+          case 'pencil':
+          case 'eraser':{
+            if (el)
+              painterBoard.value.addPosition(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+            break
+          }
+          case 'select':{
+            const selectEl = painterBoard.value.select.getSelectedElement()
+            const distX = clientX - painterBoard.value.mouseRecord.lastStart.x
+            const distY = clientY - painterBoard.value.mouseRecord.lastStart.y
+            const offsetX = clientX - painterBoard.value.mouseRecord.lastMove.x
+            const offsetY = clientY - painterBoard.value.mouseRecord.lastMove.y
+            if (selectEl) {
+              switch (painterBoard.value.select.transformType) {
+                case 'null':{
+                  break
+                }
+                case 'move':{
+                  painterBoard.value.select.moveSelectedElement({ x: offsetX, y: offsetY })
+                  break
+                }
+                case 'left-bottom':{
+                  const scaleX = (selectEl.rect.width - distX) / selectEl.rect.width
+                  const scaleY = (selectEl.rect.height + distY) / selectEl.rect.height
+                  painterBoard.value.select.resizeSelectedElement(scaleX, scaleY)
+                  break
+                }
+                case 'right-bottom':{
+                  const scaleX = (selectEl.rect.width + distX) / selectEl.rect.width
+                  const scaleY = (selectEl.rect.height + distY) / selectEl.rect.height
+                  painterBoard.value.select.resizeSelectedElement(scaleX, scaleY)
+                  break
+                }
+                case 'left-top':{
+                  const scaleX = (selectEl.rect.width - distX) / selectEl.rect.width
+                  const scaleY = (selectEl.rect.height - distY) / selectEl.rect.height
+                  painterBoard.value.select.resizeSelectedElement(scaleX, scaleY)
+                  break
+                }
+                case 'right-top':{
+                  const scaleX = (selectEl.rect.width + distX) / selectEl.rect.width
+                  const scaleY = (selectEl.rect.height - distY) / selectEl.rect.height
+                  painterBoard.value.select.resizeSelectedElement(scaleX, scaleY)
+                  break
+                }
+              }
+            }
+            break
+          }
+        }
+        painterBoard.value.render()
+      }
+    }
+    else {
+      switch (painterBoard.value.toolType) {
+        case 'line':
+        case 'rect':
+        case 'ellipse':
+        case 'text':
+        case 'image':
+        case 'pencil':
+        case 'eraser':{
+          break
+        }
+        case 'select':{
+          painterBoard.value.select.hoverSelectElement(painterBoard.value.clientToCanvas({ x: clientX, y: clientY }))
+          break
         }
       }
     }
@@ -150,7 +219,7 @@ function onMouseup(ev: MouseEvent) {
         painterBoard.value.render()
         painterBoard.value.currentElement = null
         painterBoard.value.saveSnapshot()
-        painterBoard.value.cache()
+        // painterBoard.value.cache()
       }
     }
     painterBoard.value.mouseRecord.lastEnd = { x: clientX, y: clientY }
@@ -210,34 +279,37 @@ function handleSaveImage() {
 
 <template>
   <div>
-    <p>
-      isSpacePress:{{ isSpacePress }}
-    </p>
-    <p>
-      tool:{{ painterBoard?.toolType }}
-    </p>
-    <p>
-      record len:{{ painterBoard?.recordManager.snapStack.length }}
-    </p>
-    <p text-lg>
-      state:
-    </p>
-    <div v-for="[id, els] in painterBoard?.state" :key="id">
-      layer id:{{ id }}
-      <p v-for="el in els" :key="el.id">
-        {{ el.id }}
+    <!-- <div>
+      <p>
+        isSpacePress:{{ isSpacePress }}
       </p>
-    </div>
-    <div h-10 />
-    <p text-lg>
-      layers:
-    </p>
-    <div v-for="l in painterBoard?.layerManager.layers" :key="l.id">
-      layer id:{{ l.id }}
-    </div>
-    <p>
-      index:{{ painterBoard?.recordManager.index }}
-    </p>
+      <p>
+        tool:{{ painterBoard?.toolType }}
+      </p>
+      <p>
+        record len:{{ painterBoard?.recordManager.snapStack.length }}
+      </p>
+      <p text-lg>
+        state:
+      </p>
+      <div v-for="[id, els] in painterBoard?.state" :key="id">
+        layer id:{{ id }}
+        <p v-for="el in els" :key="el.id">
+          {{ el.id }}
+        </p>
+      </div>
+      <div h-10 />
+      <p text-lg>
+        layers:
+      </p>
+      <div v-for="l in painterBoard?.layerManager.layers" :key="l.id">
+        layer id:{{ l.id }}
+      </div>
+      <p>
+        index:{{ painterBoard?.recordManager.index }}
+      </p>
+    </div> -->
+
     <div flex>
       <ToolBar
         v-if="painterBoard"

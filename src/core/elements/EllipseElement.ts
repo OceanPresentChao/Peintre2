@@ -10,10 +10,6 @@ export class EllipseElement extends CanvasElement {
     renderEllipse(context, this)
   }
 
-  addPosition(position: Position) {
-    this.positions.push(position)
-  }
-
   setStartPosition(position: Position) {
     this.positions[0] = position
   }

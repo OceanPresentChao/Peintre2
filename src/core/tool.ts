@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import type { ElementRect, Position } from '@/types'
 
 export function deepCopy<T>(instance: T, map = new WeakMap<any, any>()): T {
   if (instance == null)
@@ -76,4 +77,32 @@ export function useMouse(): Ref<{ x: number; y: number }> {
       window.removeEventListener('mousemove', onMouseMove)
   })
   return client
+}
+
+export function pointDistance(a: Position, b: Position) {
+  return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
+}
+
+export function pointToLineDist(p: Position, line: { start: Position; end: Position }) {
+  const ab: Position = {
+    x: line.end.x - line.start.x,
+    y: line.end.y - line.start.y,
+  }
+  const ap: Position = {
+    x: p.x - line.start.x,
+    y: p.y - line.start.y,
+  }
+  const sin = (ab.x * ap.y - ab.y * ap.x) / ((pointDistance(line.start, line.end) * pointDistance(line.start, p)))
+  return Math.abs(sin * pointDistance(line.start, p))
+}
+
+export function movePoint(offset: { x: number;y: number }, point: Position) {
+  return {
+    x: point.x + offset.x,
+    y: point.y + offset.y,
+  }
+}
+
+export function isInsideRect(position: Position, rect: ElementRect) {
+  return position.x >= rect.left && position.x <= rect.right && position.y >= rect.top && position.y <= rect.bottom
 }

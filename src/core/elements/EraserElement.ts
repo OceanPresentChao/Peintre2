@@ -6,10 +6,6 @@ export class EraserElement extends CanvasElement {
     super('eraser', layer, style)
   }
 
-  addPosition(position: Position) {
-    this.positions.push(position)
-  }
-
   render(context: CanvasRenderingContext2D) {
     renderEraser(context, this)
   }

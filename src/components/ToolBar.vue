@@ -65,6 +65,11 @@ watch(toolSetting, (nv) => {
         </button>
       </div>
       <div>
+        <button @click="$emit('setTool', 'select')">
+          select
+        </button>
+      </div>
+      <div>
         <label>Stroke Color:</label>
         <input v-model="toolSetting.strokeStyle" type="color">
         <label>Fill Color:</label>

@@ -78,6 +78,8 @@ export class PainterBoard {
     // index = 0为栈顶，故从栈底开始渲染
     for (let i = this.layerManager.layers.length - 1; i >= 0; i--)
       this.renderLayer(this.layerManager.layers[i].id)
+    if (this.select.selectElIndex !== -1)
+      this.select.renderResizeRect()
   }
 
   renderLayer(id: string) {
@@ -92,18 +94,24 @@ export class PainterBoard {
 
   // Position是相对于 画布原点为（0,0）时 的坐标。不受拖拽画布的影响
   addPosition(position: Position) {
-    if (this.currentElement)
+    if (this.currentElement) {
       this.currentElement.addPosition(position)
+      this.currentElement.updateRect(position)
+    }
   }
 
   setStartPosition(position: Position) {
-    if (this.currentElement)
+    if (this.currentElement) {
       this.currentElement.positions[0] = position
+      this.currentElement.updateRect(position)
+    }
   }
 
   setEndPosition(position: Position) {
-    if (this.currentElement)
+    if (this.currentElement) {
       this.currentElement.positions[1] = position
+      this.currentElement.updateRect(position)
+    }
   }
 
   addElement(el: DrawElement) {

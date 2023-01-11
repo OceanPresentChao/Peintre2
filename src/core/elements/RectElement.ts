@@ -10,10 +10,6 @@ export class RectElement extends CanvasElement {
     renderRect(context, this)
   }
 
-  addPosition(position: Position) {
-    this.positions.push(position)
-  }
-
   setStartPosition(position: Position) {
     this.positions[0] = position
   }

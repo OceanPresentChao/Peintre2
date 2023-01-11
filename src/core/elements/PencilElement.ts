@@ -1,13 +1,9 @@
 import { CanvasElement } from './CanvasElement'
-import type { ContextStyle, Position } from '@/types'
+import type { ContextStyle } from '@/types'
 
 export class PencilElement extends CanvasElement {
   constructor(layer: string, style: ContextStyle) {
     super('pencil', layer, style)
-  }
-
-  addPosition(position: Position) {
-    this.positions.push(position)
   }
 
   render(context: CanvasRenderingContext2D) {

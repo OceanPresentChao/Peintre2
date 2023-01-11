@@ -6,4 +6,12 @@ export const defaultStyle: ContextStyle = {
   fillStyle: '#000000',
 }
 
+export const selectRectStyle: ContextStyle = {
+  lineWidth: 3,
+  strokeStyle: '#65CC8A',
+  fillStyle: '#65CC8A',
+}
+
 export const KEY_PREFIX = 'PEINTRE2_'
+
+export const RECT_MIN_SIZE = 50

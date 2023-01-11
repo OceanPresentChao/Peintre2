@@ -12,6 +12,8 @@ export function deserializeElement(data: string) {
   const obj = JSON.parse(data) as CanvasElement
   let el: CanvasElement | null = null
   switch (obj.type) {
+    // 永远不会出现select类型的元素
+    case 'select':
     case 'line':{
       el = new LineElement(obj.layer, obj.style)
       break
