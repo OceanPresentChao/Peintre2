@@ -251,11 +251,20 @@ function handleSetStyle(style: ContextStyle) {
 }
 
 function handleSetLayer(id: string) {
-  painterBoard.value?.setCurrentLayer(id)
+  if (painterBoard.value)
+    painterBoard.value.setCurrentLayer(id)
 }
 
 function handleAddLayer() {
-  painterBoard.value?.addLayer()
+  if (painterBoard.value)
+    painterBoard.value.addLayer()
+}
+
+function handleRemoveLayer(layerId: string) {
+  if (painterBoard.value) {
+    painterBoard.value.removeLayer(layerId)
+    painterBoard.value.render()
+  }
 }
 
 function handleDragLayer() {
@@ -334,6 +343,7 @@ function handleSaveImage() {
         :cur-state-index="painterBoard!.recordManager.index"
         @add-layer="handleAddLayer"
         @set-layer="handleSetLayer"
+        @remove-layer="handleRemoveLayer"
         @drag-layer="handleDragLayer"
         @set-tool="handleSetTool"
         @set-style="handleSetStyle"

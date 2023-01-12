@@ -131,6 +131,11 @@ export class PainterBoard {
     return layer
   }
 
+  removeLayer(layerId: string) {
+    if (this.state.size > 1)
+      this.layerManager.removeLayer(layerId)
+  }
+
   setStyle(style: ContextStyle) {
     this.style = style
     Object.assign(this.context, style)

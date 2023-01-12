@@ -22,7 +22,7 @@ interface ToolConfig {
 const props = withDefaults(defineProps<ToolBarProps>(), {
   mode: 'side',
 })
-const emits = defineEmits(['addLayer', 'setLayer', 'dragLayer', 'setTool', 'redo', 'undo', 'setStyle', 'save'])
+const emits = defineEmits(['addLayer', 'setLayer', 'dragLayer', 'setTool', 'redo', 'undo', 'setStyle', 'save', 'removeLayer'])
 const toolSetting = computed(() => unref(props.setting))
 const isElapsed = ref(true)
 
@@ -130,9 +130,12 @@ watch(toolSetting, (nv) => {
         <label><Icon icon="carbon:draw" inline for="lineWidth" /></label>
         <input v-model="toolSetting.lineWidth" type="range" name="lineWidth" w-20 :title="String(toolSetting.lineWidth)">
       </div>
-      <div>
-        <button text-lg title="add layer" @click="$emit('addLayer')">
+      <div my-1>
+        <button text-lg mx-1 title="add layer" @click="$emit('addLayer')">
           <Icon icon="material-symbols:add-card-outline" />
+        </button>
+        <button text-lg mx-1 title="remove layer" @click="$emit('removeLayer', curLayer.id)">
+          <Icon icon="material-symbols:credit-card-off-outline" />
         </button>
       </div>
       <div class="layerList" overflow-y-auto max-h-26>
