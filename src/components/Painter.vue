@@ -11,10 +11,16 @@ import { RectElement } from '@/core/elements/RectElement'
 interface IPainterProps {
   width?: number
   height?: number
+  maxLineWidth?: number
+  minLineWidth?: number
+  mode?: 'side' | 'float'
 }
 const props = withDefaults(defineProps<IPainterProps>(), {
   width: 800,
   height: 600,
+  maxLineWidth: 100,
+  minLineWidth: 1,
+  mode: 'side',
 })
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -298,49 +304,19 @@ function handleSaveImage() {
 
 <template>
   <div>
-    <div>
-      <p>
-        record len:{{ painterBoard?.recordManager.snapStack.length }}
-      </p>
-      <p text-lg>
-        state:
-      </p>
-      <div v-for="[id, els] in painterBoard?.state" :key="id">
-        layer id:{{ id }}
-        <p v-for="el in els" :key="el.id">
-          {{ el.id }}
-        </p>
-      </div>
-      <div h-10 />
-      <p text-lg>
-        layers:
-      </p>
-      <div v-for="l in painterBoard?.layerManager.layers" :key="l.id">
-        layer id:{{ l.title }}
-      </div>
-      <p>
-        index:{{ painterBoard?.recordManager.index }}
-      </p>
-    </div>
-
-    <div>
-      <p>
-        {{ painterBoard?.select.transformType }}
-      </p>
-      <p>
-        {{ painterBoard?.select.getSelectedElement()?.rect }}
-      </p>
-    </div>
     <div flex relative>
       <ToolBar
         v-if="painterBoard"
         flex-none
+        :mode="mode"
         :layers="painterBoard!.layerManager.layers"
         :setting="painterBoard!.style"
         :cur-layer="painterBoard!.currentLayer"
         :tool-type="painterBoard!.toolType"
         :state-length="painterBoard!.recordManager.snapStack. length"
         :cur-state-index="painterBoard!.recordManager.index"
+        :max-line-width="maxLineWidth"
+        :min-line-width="minLineWidth"
         @add-layer="handleAddLayer"
         @set-layer="handleSetLayer"
         @remove-layer="handleRemoveLayer"

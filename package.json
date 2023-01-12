@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "author": "OceanPresent <oceanpresent@163.com>",
   "license": "MIT",
-  "homepage": "https://github.com/OceanPresentChao/peintre2",
+  "homepage": "https://github.com/OceanPresentChao/Peintre2",
   "repository": {
     "type": "git",
-    "url": "https://github.com/OceanPresentChao/peintre2.git"
+    "url": "https://github.com/OceanPresentChao/Peintre2.git"
   },
   "keywords": [
     "oceanpresent"
@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "vue": "^3.2.45",
-    "vue-i18n": "^9.2.2",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {

@@ -3,21 +3,21 @@
 一个开箱即用的可配置的轻量级Vue3画板组件。支持多图层、多工具、选择变形图形
 
 <p align='center'>
- <a href='./README.EN.md'>English</a> |简体中文
+English | <a href="./README.md">简体中文</a>
 </p>
 
-## 特性
+## Features
 
-1. 多图层 √
-2. 可切换画笔颜色、大小 √
-3. 图形工具 √
-4. 图层拖拽摆放 √
-5. 拖拽画布 √
-6. 撤销、重做操作 √
-7. 保存图形 √
-8. 可持久化保存 √
-9. 选择、变形图形 √
-10. 两种工具栏样式可选 √
+1. multi layers √
+2. change color and line width of tool √
+3. geometry tool such as line、rectangle、ellipse √
+4. draggable layers √
+5. grabbing context √
+6. undo、redo √
+7. save image √
+8. storage with localstorage √
+9. selecting and move、resize elements √
+10. optional tool bar mode √
 
 ## Live Demo
 
