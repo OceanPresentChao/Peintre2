@@ -9,8 +9,8 @@ import { EllipseElement } from '@/core/elements/EllipseElement'
 import { LineElement } from '@/core/elements/LineElement'
 import { RectElement } from '@/core/elements/RectElement'
 interface IPainterProps {
-  width: number
-  height: number
+  width?: number
+  height?: number
 }
 const props = withDefaults(defineProps<IPainterProps>(), {
   width: 800,
@@ -289,13 +289,7 @@ function handleSaveImage() {
 
 <template>
   <div>
-    <!-- <div>
-      <p>
-        isSpacePress:{{ isSpacePress }}
-      </p>
-      <p>
-        tool:{{ painterBoard?.toolType }}
-      </p>
+    <div>
       <p>
         record len:{{ painterBoard?.recordManager.snapStack.length }}
       </p>
@@ -313,12 +307,12 @@ function handleSaveImage() {
         layers:
       </p>
       <div v-for="l in painterBoard?.layerManager.layers" :key="l.id">
-        layer id:{{ l.id }}
+        layer id:{{ l.title }}
       </div>
       <p>
         index:{{ painterBoard?.recordManager.index }}
       </p>
-    </div> -->
+    </div>
 
     <div>
       <p>
@@ -328,9 +322,10 @@ function handleSaveImage() {
         {{ painterBoard?.select.getSelectedElement()?.rect }}
       </p>
     </div>
-    <div flex>
+    <div flex relative>
       <ToolBar
         v-if="painterBoard"
+        flex-none
         :layers="painterBoard!.layerManager.layers"
         :setting="painterBoard!.style"
         :cur-layer="painterBoard!.currentLayer"
@@ -346,13 +341,15 @@ function handleSaveImage() {
         @undo="handleUndo"
         @save="handleSaveImage"
       />
-      <canvas
-        ref="canvasRef" bg-blue
-        :width="props.width" :height="props.height"
-        @mousedown="handleMousedown"
-        @mousemove="handleMousemove"
-        @mouseup="handleMouseup"
-      />
+      <div flex-none>
+        <canvas
+          ref="canvasRef" bg-blue
+          :width="props.width" :height="props.height"
+          @mousedown="handleMousedown"
+          @mousemove="handleMousemove"
+          @mouseup="handleMouseup"
+        />
+      </div>
     </div>
   </div>
 </template>

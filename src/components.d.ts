@@ -5,6 +5,7 @@
 declare module 'vue' {
   export interface GlobalComponents {
     Container: typeof import('./components/container.vue')['default']
+    Layer: typeof import('./components/Layer.vue')['default']
     Painter: typeof import('./components/Painter.vue')['default']
     ToolBar: typeof import('./components/ToolBar.vue')['default']
   }

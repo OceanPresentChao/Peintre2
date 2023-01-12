@@ -5,6 +5,7 @@ import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Unocss from 'unocss/vite'
 import { presetAttributify, presetUno } from 'unocss'
+import transformerDirectives from '@unocss/transformer-directives'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -25,10 +26,11 @@ export default defineConfig({
     }),
     Unocss({
       presets: [
-        presetAttributify({ /* preset options */}),
+        presetAttributify(),
         presetUno(),
         // ...custom presets
       ],
+      transformers: [transformerDirectives()],
     }),
   ],
   resolve: {
