@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable'
+import { Icon } from '@iconify/vue'
+import { computed, ref, unref, watch } from 'vue'
+import { ContextStyle, DrawType, Layer } from '@/types'
 
-import type { ContextStyle, DrawType, Layer } from '@/types'
-
-interface ToolBarProps {
+interface IToolBarProps {
   setting: ContextStyle
   layers: Layer[]
   curLayer: Layer
@@ -13,6 +14,8 @@ interface ToolBarProps {
   minLineWidth: number
   maxLineWidth: number
   mode: 'side' | 'float'
+  width?: number
+  height?: number
 }
 
 interface ToolConfig {
@@ -21,7 +24,7 @@ interface ToolConfig {
   title: string
 }
 
-const props = defineProps<ToolBarProps>()
+const props = defineProps<IToolBarProps>()
 const emits = defineEmits(['addLayer', 'setLayer', 'dragLayer', 'setTool', 'redo', 'undo', 'setStyle', 'save', 'removeLayer'])
 const toolSetting = computed(() => unref(props.setting))
 const isElapsed = ref(true)
@@ -54,7 +57,13 @@ watch(toolSetting, (nv) => {
 </script>
 
 <template>
-  <div :style="{ position: mode === 'float' ? 'absolute' : 'unset' }" flex>
+  <div :style="{ 
+    position: mode === 'float' ? 'absolute' : 'unset',
+    display:'flex',
+    maxWidth: width,
+    maxHeight: height
+    }"
+  >
     <div
       v-if="mode === 'float'"
       class="tool-box"
@@ -116,7 +125,7 @@ watch(toolSetting, (nv) => {
           <Icon icon="material-symbols:save" />
         </button>
       </div>
-      <div my-1>
+      <div>
         <div :style="{ color: toolSetting.strokeStyle }">
           <label for="stroke" m-2><Icon icon="material-symbols:border-color-rounded" inline /></label>
           <input id="stroke" v-model="toolSetting.strokeStyle" type="color" title="stroke color" w-8>
@@ -129,18 +138,25 @@ watch(toolSetting, (nv) => {
       <div>
         <label><Icon icon="carbon:draw" inline for="lineWidth" /></label>
         <input
-          v-model="toolSetting.lineWidth" type="range" name="lineWidth" w-20
+          v-model="toolSetting.lineWidth" type="range" name="lineWidth"
           :title="String(toolSetting.lineWidth)"
           :step="1"
           :min="minLineWidth"
           :max="maxLineWidth"
+          style="width: 5rem"
         >
       </div>
-      <div my-1>
-        <button text-lg mx-1 title="add layer" @click="$emit('addLayer')">
+      <div style="display: flex;column-gap: 1rem;margin:5px 0;">
+        <button 
+        title="add layer" @click="$emit('addLayer')"
+        class="btn-tool small-btn"
+        >
           <Icon icon="material-symbols:add-card-outline" />
         </button>
-        <button text-lg mx-1 title="remove layer" @click="$emit('removeLayer', curLayer.id)">
+        <button 
+        title="remove layer" @click="$emit('removeLayer', curLayer.id)"
+        class="btn-tool small-btn"
+        >
           <Icon icon="material-symbols:credit-card-off-outline" />
         </button>
       </div>
@@ -152,8 +168,8 @@ watch(toolSetting, (nv) => {
         >
           <template #item="{ element }">
             <div
+              style="cursor: pointer;"
               :class="{ activeLayer: curLayer.id === element.id }"
-              my-1 py-1 border-rounded
               @click="$emit('setLayer', element.id)"
             >
               <input
@@ -171,28 +187,31 @@ watch(toolSetting, (nv) => {
 
 <style scoped>
 .activeLayer {
-  @apply bg-amber-100;
+  background-color: #fef3c7; /* bg-amber-100 */
 }
 
 .activeTool.pencil {
-  @apply text-red;
+  color: #ef4444; /* text-red */
 }
 
 .activeTool.eraser {
-  @apply text-blue;
+  color: #3b82f6; /* text-blue */
 }
+
 .activeTool.line {
-  @apply text-green;
+  color: #10b981; /* text-green */
 }
+
 .activeTool.rect {
-  @apply text-yellow;
+  color: #facc15; /* text-yellow */
 }
+
 .activeTool.ellipse {
-  @apply text-purple;
+  color: #a855f7; /* text-purple */
 }
 
 .activeTool.select {
-  @apply text-orange;
+  color: #f97316; /* text-orange */
 }
 
 .ghost {
@@ -206,33 +225,65 @@ watch(toolSetting, (nv) => {
 
 button {
   border-color: currentColor;
+  padding: 0;
+  margin: 0;
 }
 
 .btn-tool {
-  @apply border-rounded border-2 px-2 text-xl cursor-pointer my-0.3;
+  border-radius: 5px;
+  border-width: 2px;
+  font-size: 1.25rem; 
+  cursor: pointer;
+  text-align: center;
+  width: 2rem;
+  height: 2rem;
 }
 
 .btn-tool:disabled {
-  @apply bg-gray-300 text-gray-500 cursor-not-allowed;
+  background-color: #d1d5db; 
+  color: #6b7280;
+  cursor: not-allowed;
 }
 
-.icon-tool {
-  @apply text-2xl;
+.small-btn {
+  font-size: 1rem; 
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .tool-container {
-  @apply flex px-1 py-3 bg-gray-100 border-rounded shadow-sky shadow-sm;
+  display: flex;
+  align-items: center;
+  padding-left: 0.25rem;   /* px-1 */
+  padding-right: 0.25rem;  /* px-1 */
+  padding-top: 0.75rem;    /* py-3 */
+  padding-bottom: 0.75rem; /* py-3 */
+  background-color: #f7fafc; /* bg-gray-100 */
+  border-radius: 0.25rem;  /* border-rounded (assuming 4px for rounded) */
+  box-shadow: 0 1px 2px 0 #0ea5e9; /* shadow-sky shadow-sm (customized for shadow color and small shadow) */
+  column-gap: 0.3rem;
+  row-gap: 0.3rem;
 }
 
 .tool-box {
-  @apply bg-green p-1 cursor-pointer;
-  border-radius: 50%;
-  width: min-content;
-  height: min-content;
+  background-color: #10b981; /* bg-green */
+  padding: 0.25rem;         /* p-1 */
+  cursor: pointer;          /* cursor-pointer */
+  border-radius: 50%;       /* border-radius: 50% */
+  width: min-content;       /* width: min-content */
+  height: min-content;      /* height: min-content */
 }
 
 .layer-item {
-  @apply outline-none border-none py-1 bg-transparent text-center w-20;
-  font-size:large;
+  outline: none;            /* outline-none */
+  border: none;             /* border-none */
+  padding-top: 0.25rem;     /* py-1 */
+  padding-bottom: 0.25rem;  /* py-1 */
+  background-color: transparent; /* bg-transparent */
+  text-align: center;       /* text-center */
+  width: 5rem;              /* w-20 (assuming 20 * 0.25rem for w-20) */
+  font-size: large;         /* font-size:large */
+  cursor: pointer;
 }
+
 </style>

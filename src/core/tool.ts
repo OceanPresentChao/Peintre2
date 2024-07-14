@@ -1,4 +1,4 @@
-import type { Ref } from 'vue'
+import { onBeforeUnmount, ref, type Ref } from 'vue'
 import type { ElementRect, Position } from '@/types'
 
 export function deepCopy<T>(instance: T, map = new WeakMap<any, any>()): T {

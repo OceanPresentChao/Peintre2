@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { useMouse } from '@/core/tool'
+import { useMouse } from '../../src/core/tool'
+import Painter from '../../src/index'
+import { ref } from 'vue'
+
 const client = useMouse()
 const mode = ref<'side' | 'float'>('side')
 </script>
@@ -24,7 +27,7 @@ const mode = ref<'side' | 'float'>('side')
       </select>
     </p>
     <div flex items-center justify-center>
-      <Painter :mode="mode" />
+      <Painter :mode="mode" :width="200" :height="100" />
     </div>
   </div>
 </template>

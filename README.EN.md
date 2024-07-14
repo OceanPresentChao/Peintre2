@@ -15,9 +15,8 @@ English | <a href="./README.md">简体中文</a>
 5. grabbing context √
 6. undo、redo √
 7. save image √
-8. storage with localstorage √
-9. selecting and move、resize elements √
-10. optional tool bar mode √
+8. selecting and move、resize elements √
+9. optional tool bar mode √
 
 ## Live Demo
 

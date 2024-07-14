@@ -1,24 +1,18 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.web.json",
   "include": [
-    "env.d.ts",
-    "src/**/*",
+    "src",
     "src/**/*.vue"
   ],
   "compilerOptions": {
+    "module": "esnext",
+    "target": "ESNext",
+    "moduleResolution": "Node",
     "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
     "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
       ]
     }
-  },
-  "references": [
-    {
-      "path": "./tsconfig.vite-config.json"
-    }
-  ]
+  }
 }

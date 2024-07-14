@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { cloneDeep } from 'lodash'
+import { onMounted, ref, watch } from 'vue'
 import { PainterBoard } from '@/core/PainterBoard'
+import ToolBar from '@/components/ToolBar.vue'
 import { PencilElement } from '@/core/elements/PencilElement'
 import { EraserElement } from '@/core/elements/EraserElement'
 import type { ContextStyle, DrawElement, DrawType } from '@/types'
@@ -8,6 +10,7 @@ import { useSpacePress, useThrottleFn } from '@/core/tool'
 import { EllipseElement } from '@/core/elements/EllipseElement'
 import { LineElement } from '@/core/elements/LineElement'
 import { RectElement } from '@/core/elements/RectElement'
+
 interface IPainterProps {
   width?: number
   height?: number
@@ -15,6 +18,8 @@ interface IPainterProps {
   minLineWidth?: number
   mode?: 'side' | 'float'
 }
+
+
 const props = withDefaults(defineProps<IPainterProps>(), {
   width: 800,
   height: 600,
@@ -304,11 +309,13 @@ function handleSaveImage() {
 
 <template>
   <div>
-    <div flex relative>
+    <div style="position:relative;display:flex;">
       <ToolBar
         v-if="painterBoard"
-        flex-none
+        style="flex: none;"
         :mode="mode"
+        :width="props.width" 
+        :height="props.height"
         :layers="painterBoard!.layerManager.layers"
         :setting="painterBoard!.style"
         :cur-layer="painterBoard!.currentLayer"
@@ -327,9 +334,9 @@ function handleSaveImage() {
         @undo="handleUndo"
         @save="handleSaveImage"
       />
-      <div flex-none>
+      <div style="flex: none;background-color:#eee;">
         <canvas
-          ref="canvasRef" bg-blue
+          ref="canvasRef"
           :width="props.width" :height="props.height"
           @mousedown="handleMousedown"
           @mousemove="handleMousemove"

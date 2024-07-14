@@ -53,3 +53,25 @@ export interface ElementRect {
 }
 
 export type CursorType = 'auto' | 'move' | 'nesw-resize' | 'nwse-resize' | 'grab' | 'grabbing' | 'pointer'
+
+export interface IPainterProps {
+  width?: number
+  height?: number
+  maxLineWidth?: number
+  minLineWidth?: number
+  mode?: 'side' | 'float'
+}
+
+export interface IToolBarProps {
+  setting: ContextStyle
+  layers: Layer[]
+  curLayer: Layer
+  toolType: DrawType
+  stateLength: number
+  curStateIndex: number
+  minLineWidth: number
+  maxLineWidth: number
+  mode: 'side' | 'float'
+  width?: number
+  height?: number
+}
