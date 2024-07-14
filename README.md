@@ -28,15 +28,17 @@
 ### With npm
 
 ```bash
-npm i peintre2
+npm i peintre
+pnpm add peintre
 ```
 
 ## Usage
 
 ```html
-import {Painter} from "peintre2"
+import Painter from "peintre"
+import 'peintre/dist/style.css'
 
-<Painter mode="side" :width="800" :height="600" :maxLine="100" :minLine="1"></Painter>
+<Painter mode="side" :width="800" :height="600" :maxLine="100" :minLine="1"/>
 
 ```
 ## Props
