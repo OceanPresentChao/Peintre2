@@ -1,18 +1,20 @@
 {
-  "include": [
-    "src",
-    "src/**/*.vue"
-  ],
   "compilerOptions": {
     "module": "esnext",
     "target": "ESNext",
     "moduleResolution": "Node",
     "strict": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
       ]
-    }
-  }
+    },
+    "types": ["node"],
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "composite": true,
+  },
+  "exclude": ["dist","node_modules"]
 }

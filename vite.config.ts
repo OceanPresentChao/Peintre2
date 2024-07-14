@@ -7,7 +7,12 @@ import dts from 'vite-plugin-dts'
 export default defineConfig({
   plugins: [
     vue(),
-    dts()
+    dts({
+      entryRoot: 'src',
+      outDir: 'dist/typings',
+      insertTypesEntry: true,
+      rollupTypes: true,
+    })
   ],
   resolve: {
     alias: {
@@ -21,7 +26,7 @@ export default defineConfig({
     outDir:'dist',
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      name: '[[name]]',
+      name: 'peintre',
       fileName: format => `peintre.${format}.js`,
     },
     rollupOptions: {
@@ -31,6 +36,7 @@ export default defineConfig({
         // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
         globals: {
           vue: 'Vue',
+          vuedraggable: 'draggable'
         },
         dir:'dist'
       },

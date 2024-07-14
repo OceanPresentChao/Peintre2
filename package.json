@@ -1,7 +1,7 @@
 {
   "name": "peintre",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "OceanPresent <oceanpresent@163.com>",
   "license": "MIT",
   "homepage": "https://github.com/OceanPresentChao/Peintre2",
@@ -17,10 +17,10 @@
   "files": [
     "dist"
   ],
-  "typings": "./dist/index.d.ts",
+  "typings": "./dist/typings/index.d.ts",
   "scripts": {
     "dev": "vite playground",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vite build .",
     "preview": "vite preview --port 5050",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint .",
